@@ -16,7 +16,7 @@ _HASH_LENGTH: int = int(os.environ.get("PYTHON_SDK_HASH_HASH_LENGTH", 32))
 _SALT_LENGTH: int = int(os.environ.get("PYTHON_SDK_HASH_SALT_LENGTH", 16))
 
 log.info(
-    "hashing configured",
+    "Hashing configured",
     TIME_COST=_TIME_COST,
     MEMORY_COST=_MEMORY_COST,
     PARALLELISM=_PARALLELISM,

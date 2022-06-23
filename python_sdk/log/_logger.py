@@ -320,7 +320,7 @@ for _existing_handler in _root_logger.handlers:
 _root_logger.addHandler(hdlr=_handler)
 
 info(
-    "logging configured",
+    "Logging configured",
     LOG_LEVEL=_LOG_LEVEL,
     LOG_OUTPUT_STYLE=_LOG_OUTPUT_STYLE,
     LOG_DESTINATION=_LOG_DESTINATION,
