@@ -211,13 +211,15 @@ if _LOG_LEVEL not in typing.get_args(_LOG_LEVEL_OPTIONS):
     sys.exit(1)
 _LOG_OUTPUT_STYLE: _LOG_OUTPUT_STYLE_OPTIONS = os.environ.get(
     "PYTHON_SDK_LOG_OUTPUT_STYLE", "MACHINE_READABLE"
-)
+).upper()
 if _LOG_OUTPUT_STYLE not in typing.get_args(_LOG_OUTPUT_STYLE_OPTIONS):
     critical(
         f"LOG_OUTPUT_STYLE {_LOG_OUTPUT_STYLE} not supported. Available options: {typing.get_args(_LOG_OUTPUT_STYLE)}"
     )
     sys.exit(1)
-_LOG_DESTINATION: _LOG_DESTINATION_OPTIONS = os.environ.get("PYTHON_SDK_LOG_DESTINATION", "STDOUT")
+_LOG_DESTINATION: _LOG_DESTINATION_OPTIONS = os.environ.get(
+    "PYTHON_SDK_LOG_DESTINATION", "STDOUT"
+).upper()
 if _LOG_DESTINATION not in typing.get_args(_LOG_DESTINATION_OPTIONS):
     critical(
         f"LOG_DESTINATION {_LOG_DESTINATION} not supported. Available options: {typing.get_args(_LOG_DESTINATION)}"
