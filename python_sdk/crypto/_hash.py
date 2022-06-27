@@ -22,7 +22,7 @@ log.info(
     PARALLELISM=_PARALLELISM,
     HASH_LENGTH=_HASH_LENGTH,
     SALT_LENGTH=_SALT_LENGTH,
-    TYPE="Argon2id"
+    TYPE="Argon2id",
 )
 
 _HASHER = argon2.PasswordHasher(
@@ -32,7 +32,7 @@ _HASHER = argon2.PasswordHasher(
     hash_len=_HASH_LENGTH,
     salt_len=_SALT_LENGTH,
     encoding="utf-8",
-    type=argon2.Type.ID
+    type=argon2.Type.ID,
 )
 
 
