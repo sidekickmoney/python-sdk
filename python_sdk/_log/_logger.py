@@ -7,6 +7,7 @@ import contextvars
 import io
 import json
 import logging
+import logging.handlers
 import sys
 import traceback
 import typing
@@ -16,6 +17,8 @@ _TERMINATING: bool = False
 _LOG_CACHE: typing.List[
     typing.Tuple[int, str, typing.Union[BaseException, bool], typing.Dict[str, typing.Any]]
 ] = []
+
+_LISTENERS: typing.List[logging.handlers.QueueListener] = []
 
 _DEFAULT_CONTEXT_VALUE_FACTORY = dict
 _CONTEXT = contextvars.ContextVar(
@@ -204,6 +207,7 @@ def _cleanup() -> None:
     _set_terminating_flag()
     _flush_logs()
     _flush_and_close_handlers()
+    _stop_listeners()
 
 
 def _flush_logs() -> None:
@@ -216,9 +220,11 @@ def _flush_and_close_handlers() -> None:
     for handler in _root_logger.handlers:
         handler.flush()
         handler.close()
-    queue_listener = getattr(_root_logger, "_queue_listener", None)
-    if queue_listener:
-        queue_listener.stop()
+
+
+def _stop_listeners() -> None:
+    for listener in _LISTENERS:
+        listener.stop()
 
 
 def set_logging_configured() -> None:
@@ -248,6 +254,10 @@ def set_level(level: str) -> None:
 
 def add_handler(handler: logging.Handler) -> None:
     _root_logger.addHandler(hdlr=handler)
+
+
+def add_listener(listener: logging.handlers.QueueListener) -> None:
+    _LISTENERS.append(listener)
 
 
 _root_logger = logging.getLogger()

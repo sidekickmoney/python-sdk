@@ -13,3 +13,4 @@ from ._logger import set_logging_configured
 from ._logger import remove_existing_handlers
 from ._logger import set_level
 from ._logger import add_handler
+from ._logger import add_listener
