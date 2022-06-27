@@ -116,6 +116,8 @@ else:
 _log.remove_existing_handlers()
 _log.add_handler(handler=_handler)
 
+_log.set_logging_configured()
+
 _log.info(
     "Logging configured",
     LOG_LEVEL=_LOG_LEVEL,
