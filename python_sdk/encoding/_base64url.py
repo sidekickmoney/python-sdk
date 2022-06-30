@@ -7,7 +7,18 @@ def b64url_encode(s: bytes) -> bytes:
 
 
 def b64url_decode(s: typing.Union[bytes, str]) -> bytes:
-    padding_character = b"=" if isinstance(s, bytes) else "="
-    padding = (len(s) % 4) * padding_character
+    if isinstance(s, bytes):
+        return _b64url_decode_bytes(s)
+    return _b64url_decode_string(s)
+
+
+def _b64url_decode_bytes(s: bytes) -> bytes:
+    padding = (len(s) % 4) * b"="
+    padded = s + padding
+    return base64.urlsafe_b64decode(padded)
+
+
+def _b64url_decode_string(s: str) -> bytes:
+    padding = (len(s) % 4) * "="
     padded = s + padding
     return base64.urlsafe_b64decode(padded)
