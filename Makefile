@@ -61,11 +61,13 @@ unit-test:
 
 lint: .venv
 	. .venv/bin/activate && \
-	black --check .
+	black --check . \
+	isort --check-only .
 
 format: .venv
 	. .venv/bin/activate && \
-	black .
+	black . \
+	isort .
 
 package:
 	@echo "TODO"

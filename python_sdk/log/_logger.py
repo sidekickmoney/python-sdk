@@ -3,10 +3,10 @@ Structured logging api's.
 """
 
 import logging
+from logging import handlers
 import multiprocessing
 import sys
 import typing
-from logging import handlers
 
 from python_sdk import _log
 from python_sdk import config

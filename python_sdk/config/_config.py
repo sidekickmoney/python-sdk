@@ -5,8 +5,8 @@ import typing
 
 from python_sdk import _log
 from python_sdk import types
-from . import _config_decoder
 
+from . import _config_decoder
 
 _CONFIG_DOCUMENT_FILE_LINE_SEPARATOR = "\n"
 _CONFIG_DOCUMENT_KEY_VALUE_SEPARATOR = "="
