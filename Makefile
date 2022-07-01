@@ -85,4 +85,8 @@ install:
 	@echo "TODO"
 
 clean:
-	@echo "TODO"
+	@rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info
+	@find . -name "__pycache__" -type d \
+		-not -path "*/.venv/*" \
+		-not -path "*/.git/*" | xargs rm -rf
+	@find . -type f -name "*.pyc" -delete
