@@ -52,9 +52,7 @@ elif _Config.LOG_DESTINATION == "ROTATING_FILE":
     _queue = multiprocessing.Queue(-1)
     # TODO(lijok): if registering atexit below this line, the EOFerror raised by multiprocessing disappears
     _handler = handlers.QueueHandler(queue=_queue)
-    _queue_listener = handlers.QueueListener(
-        _queue, _rotating_file_handler, respect_handler_level=True
-    )
+    _queue_listener = handlers.QueueListener(_queue, _rotating_file_handler, respect_handler_level=True)
     _log.add_listener(listener=_queue_listener)
     _queue_listener.start()
 else:

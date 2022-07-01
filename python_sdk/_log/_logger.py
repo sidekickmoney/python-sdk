@@ -14,16 +14,12 @@ import typing
 
 _LOGGING_CONFIGURED: bool = False
 _TERMINATING: bool = False
-_LOG_CACHE: typing.List[
-    typing.Tuple[int, str, typing.Union[BaseException, bool], typing.Dict[str, typing.Any]]
-] = []
+_LOG_CACHE: typing.List[typing.Tuple[int, str, typing.Union[BaseException, bool], typing.Dict[str, typing.Any]]] = []
 
 _LISTENERS: typing.List[logging.handlers.QueueListener] = []
 
 _DEFAULT_CONTEXT_VALUE_FACTORY = dict
-_CONTEXT = contextvars.ContextVar(
-    "_PYTHON_SDK_LOGGING_CONTEXT", default=_DEFAULT_CONTEXT_VALUE_FACTORY()
-)
+_CONTEXT = contextvars.ContextVar("_PYTHON_SDK_LOGGING_CONTEXT", default=_DEFAULT_CONTEXT_VALUE_FACTORY())
 
 
 class _StructuredLogPreFormatter:
@@ -83,9 +79,7 @@ class _StructuredLogPreFormatter:
         context = getattr(record, "context", {})
         for key in context:
             if key in data:
-                warning(
-                    f"Attempted to overwrite log attribute: {key}. Log attributes cannot be overwritten."
-                )
+                warning(f"Attempted to overwrite log attribute: {key}. Log attributes cannot be overwritten.")
             else:
                 data[key] = context[key]
 
@@ -179,9 +173,7 @@ def debug(message: typing.Any, **kwargs: typing.Any) -> None:
     _log(level=logging.DEBUG, message=message, **kwargs)
 
 
-def exception(
-    message: typing.Any, exception: typing.Optional[BaseException] = None, **kwargs: typing.Any
-) -> None:
+def exception(message: typing.Any, exception: typing.Optional[BaseException] = None, **kwargs: typing.Any) -> None:
     _log(level=logging.ERROR, message=message, exception=exception or sys.exc_info(), **kwargs)
 
 

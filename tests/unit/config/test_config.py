@@ -51,9 +51,7 @@ def test_config() -> None:
         OPTIONAL_LIST_OF_STRS: typing.Optional[typing.List[str]]
         OPTIONAL_LIST_OF_INTS: typing.Optional[typing.List[int]]
         OPTIONAL_LIST_OF_FLOATS: typing.Optional[typing.List[float]]
-        OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[
-            typing.List[config.Base64EncodedString]
-        ]
+        OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[typing.List[config.Base64EncodedString]]
         CHOICE: config.Choice["ONE", "TWO"]
         OPTIONAL_CHOICE: typing.Optional[config.Choice["ONE", "TWO"]]
         OPTIONAL_LIST_OF_CHOICES: typing.Optional[typing.List[config.Choice["ONE", "TWO"]]]
@@ -77,20 +75,17 @@ def test_config() -> None:
         DEFAULT_OPTIONAL_FLOAT: typing.Optional[float] = 1.5
         DEFAULT_OPTIONAL_BOOL: typing.Optional[bool] = True
         DEFAULT_OPTIONAL_UNVALIDATED_DICT: typing.Optional[config.UnvalidatedDict] = {}
-        DEFAULT_OPTIONAL_BASE64_ENCODED_STRING: typing.Optional[
-            config.Base64EncodedString
-        ] = "dGVzdA=="
+        DEFAULT_OPTIONAL_BASE64_ENCODED_STRING: typing.Optional[config.Base64EncodedString] = "dGVzdA=="
         DEFAULT_OPTIONAL_LIST_OF_STRS: typing.Optional[typing.List[str]] = ["test", "test"]
         DEFAULT_OPTIONAL_LIST_OF_INTS: typing.Optional[typing.List[int]] = [1, 1]
         DEFAULT_OPTIONAL_LIST_OF_FLOATS: typing.Optional[typing.List[float]] = [1.5, 1.5]
-        DEFAULT_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[
-            typing.List[config.Base64EncodedString]
-        ] = ["dGVzdA==", "dGVzdA=="]
+        DEFAULT_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[typing.List[config.Base64EncodedString]] = [
+            "dGVzdA==",
+            "dGVzdA==",
+        ]
         DEFAULT_CHOICE: config.Choice["ONE", "TWO"] = "ONE"
         DEFAULT_OPTIONAL_CHOICE: typing.Optional[config.Choice["ONE", "TWO"]] = "ONE"
-        DEFAULT_OPTIONAL_LIST_OF_CHOICES: typing.Optional[
-            typing.List[config.Choice["ONE", "TWO"]]
-        ] = ["ONE", "TWO"]
+        DEFAULT_OPTIONAL_LIST_OF_CHOICES: typing.Optional[typing.List[config.Choice["ONE", "TWO"]]] = ["ONE", "TWO"]
 
         # These will not be set, so should become Nones
         UNSET_OPTIONAL_STR: typing.Optional[str]
@@ -102,9 +97,7 @@ def test_config() -> None:
         UNSET_OPTIONAL_LIST_OF_STRS: typing.Optional[typing.List[str]]
         UNSET_OPTIONAL_LIST_OF_INTS: typing.Optional[typing.List[int]]
         UNSET_OPTIONAL_LIST_OF_FLOATS: typing.Optional[typing.List[float]]
-        UNSET_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[
-            typing.List[config.Base64EncodedString]
-        ]
+        UNSET_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[typing.List[config.Base64EncodedString]]
         UNSET_OPTIONAL_CHOICE: typing.Optional[config.Choice["ONE", "TWO"]]
         UNSET_OPTIONAL_LIST_OF_CHOICES: typing.Optional[typing.List[config.Choice["ONE", "TWO"]]]
 

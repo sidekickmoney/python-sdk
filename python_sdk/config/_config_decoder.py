@@ -161,9 +161,7 @@ def _str_to_optional_base64_encoded_string(string: typing.Optional[str]) -> typi
     return None
 
 
-def _str_to_optional_choice(
-    string: typing.Optional[str], choice: typing.Type
-) -> typing.Optional[str]:
+def _str_to_optional_choice(string: typing.Optional[str], choice: typing.Type) -> typing.Optional[str]:
     if string:
         return _str_to_choice(string=string, choice=choice)
     return None
@@ -236,9 +234,7 @@ _DECODERS_LOOKUP_TABLE = {
     typing.Optional[typing.List[str]]: _str_to_optional_list_of_strs,
     typing.Optional[typing.List[int]]: _str_to_optional_list_of_ints,
     typing.Optional[typing.List[float]]: _str_to_optional_list_of_floats,
-    typing.Optional[
-        typing.List[Base64EncodedString]
-    ]: _str_to_optional_list_of_base64_encoded_strings,
+    typing.Optional[typing.List[Base64EncodedString]]: _str_to_optional_list_of_base64_encoded_strings,
 }
 
 
@@ -263,30 +259,22 @@ def _is_choice(data_type: typing.Type) -> bool:
         if len({type(arg) for arg in choice_options}) == 1:
             if type(choice_options[0]) == str:
 
-                choice_options_uppercased = [
-                    choice_option.upper() for choice_option in choice_options
-                ]
+                choice_options_uppercased = [choice_option.upper() for choice_option in choice_options]
                 if choice_options_uppercased == choice_options:
                     return True
     return False
 
 
 def _is_optional_choice(data_type: typing.Type) -> bool:
-    return typing.get_origin(data_type) == typing.Union and _is_choice(
-        data_type=typing.get_args(data_type)[0]
-    )
+    return typing.get_origin(data_type) == typing.Union and _is_choice(data_type=typing.get_args(data_type)[0])
 
 
 def _is_list_of_choices(data_type: typing.Type) -> bool:
-    return typing.get_origin(data_type) == list and _is_choice(
-        data_type=typing.get_args(data_type)[0]
-    )
+    return typing.get_origin(data_type) == list and _is_choice(data_type=typing.get_args(data_type)[0])
 
 
 def _is_optional_list_of_choices(data_type: typing.Type) -> bool:
-    return typing.get_origin(data_type) == typing.Union and _is_list_of_choices(
-        data_type=typing.get_args(data_type)[0]
-    )
+    return typing.get_origin(data_type) == typing.Union and _is_list_of_choices(data_type=typing.get_args(data_type)[0])
 
 
 def _decode_str(string: str, data_type: typing.Type) -> typing.Any:

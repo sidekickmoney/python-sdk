@@ -32,9 +32,7 @@ def _get_config_source() -> typing.Union[_EnvironmentVariables, _LocalFile]:
             f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not supported. Available options: {_SOURCE_FROM_OPTIONS}"
         )
 
-    source_from_local_file_filepath = os.environ.get(
-        "PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH"
-    )
+    source_from_local_file_filepath = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH")
     if source_from == "LOCAL_FILE" and not source_from_local_file_filepath:
         raise ValueError(
             "PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH is required when CONFIG_SOURCE_FROM is set to "
@@ -145,9 +143,7 @@ def _get_config_from_local_file(prefix: str, filepath: str) -> typing.Dict[str, 
     except FileNotFoundError:
         raise FileNotFoundError(f"File not found: {filepath}")
     except PermissionError:
-        raise PermissionError(
-            f"Encountered a permission error when trying to read file: {filepath}"
-        )
+        raise PermissionError(f"Encountered a permission error when trying to read file: {filepath}")
 
     parsed_config = _parse_config_document(prefix=prefix, config_document=config_document)
     return parsed_config
@@ -163,9 +159,7 @@ def _parse_config_document(prefix: str, config_document: str) -> typing.Dict[str
     return config
 
 
-def _process_config(
-    cls: _ConfigProtocol, unprocessed_config: typing.Dict[str, str]
-) -> typing.Dict[str, typing.Any]:
+def _process_config(cls: _ConfigProtocol, unprocessed_config: typing.Dict[str, str]) -> typing.Dict[str, typing.Any]:
     processed_config = {}
     for key, unprocessed_value in unprocessed_config.items():
         config_option = key.split(cls._PREFIX, 1)[1]
@@ -184,9 +178,7 @@ def _process_config(
     return processed_config
 
 
-def _process_config_value(
-    cls: _ConfigProtocol, config_option: str, unprocessed_value: str
-) -> typing.Any:
+def _process_config_value(cls: _ConfigProtocol, config_option: str, unprocessed_value: str) -> typing.Any:
     config_option_data_type = cls.__annotations__[config_option]
     try:
         processed_value = _config_decoder.decode_config_value(
@@ -216,6 +208,4 @@ def _apply_config_to_config_class(cls: _ConfigProtocol, config: typing.Dict[str,
             elif config_option_is_optional:
                 setattr(cls, config_option, None)
             else:
-                raise ValueError(
-                    f"Required config option {cls._PREFIX}{config_option} with no default was not set"
-                )
+                raise ValueError(f"Required config option {cls._PREFIX}{config_option} with no default was not set")
