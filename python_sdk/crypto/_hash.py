@@ -1,36 +1,36 @@
-import os
-import sys
-
 import argon2
 
-from python_sdk import log
+from python_sdk import _log
+from python_sdk import config
 
-# TODO(lijok): can we implement this with cryptography to reduce number of deps?
-# TODO(lijok): ensure values are of correct data type
+
 # defaults are based on the RFC9106 high memory recommendation
 # https://www.rfc-editor.org/rfc/rfc9106.html#name-parameter-choice
-_TIME_COST: int = int(os.environ.get("PYTHON_SDK_HASH_TIME_COST", 1))
-_MEMORY_COST: int = int(os.environ.get("PYTHON_SDK_HASH_MEMORY_COST_KIBIBYTES", 2097152))  # 2GB
-_PARALLELISM: int = int(os.environ.get("PYTHON_SDK_HASH_PARALLELISM", 4))
-_HASH_LENGTH: int = int(os.environ.get("PYTHON_SDK_HASH_HASH_LENGTH", 32))
-_SALT_LENGTH: int = int(os.environ.get("PYTHON_SDK_HASH_SALT_LENGTH", 16))
+@config.config(prefix="PYTHON_SDK_")
+class _Config:
+    HASH_TIME_COST: int = 1
+    HASH_MEMORY_COST_KIBIBYTES: int = 2097152  # 2GB
+    HASH_PARALLELISM: int = 4
+    HASH_HASH_LENGTH: int = 32
+    HASH_SALT_LENGTH: int = 16
 
-log.info(
+
+_log.info(
     "Hashing configured",
-    TIME_COST=_TIME_COST,
-    MEMORY_COST=_MEMORY_COST,
-    PARALLELISM=_PARALLELISM,
-    HASH_LENGTH=_HASH_LENGTH,
-    SALT_LENGTH=_SALT_LENGTH,
+    TIME_COST=_Config.HASH_TIME_COST,
+    MEMORY_COST=_Config.HASH_MEMORY_COST_KIBIBYTES,
+    PARALLELISM=_Config.HASH_PARALLELISM,
+    HASH_LENGTH=_Config.HASH_HASH_LENGTH,
+    SALT_LENGTH=_Config.HASH_SALT_LENGTH,
     TYPE="Argon2id",
 )
 
 _HASHER = argon2.PasswordHasher(
-    time_cost=_TIME_COST,
-    memory_cost=_MEMORY_COST,
-    parallelism=_PARALLELISM,
-    hash_len=_HASH_LENGTH,
-    salt_len=_SALT_LENGTH,
+    time_cost=_Config.HASH_TIME_COST,
+    memory_cost=_Config.HASH_MEMORY_COST_KIBIBYTES,
+    parallelism=_Config.HASH_PARALLELISM,
+    hash_len=_Config.HASH_HASH_LENGTH,
+    salt_len=_Config.HASH_SALT_LENGTH,
     encoding="utf-8",
     type=argon2.Type.ID,
 )
