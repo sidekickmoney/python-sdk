@@ -31,31 +31,31 @@ test: acceptance-test integration-test unit-test
 
 all-test: acceptance-test integration-test load-test performance-test property-test system-test unit-test
 
-acceptance-test:
+acceptance-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/acceptance
 
-integration-test:
+integration-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/integration
 
-load-test:
+load-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/load
 
-performance-test:
+performance-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/performance
 
-property-test:
+property-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/property
 
-system-test:
+system-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/system
 
-unit-test:
+unit-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/unit
 
@@ -69,19 +69,19 @@ format: .venv
 	black . && \
 	isort .
 
-package:
+package: .venv
 	@echo "TODO"
 
-publish:
+publish: .venv
 	@echo "TODO"
 
-build:
+build: .venv
 	@echo "TODO"
 
-upload:
+upload: .venv
 	@echo "TODO"
 
-install:
+install: .venv
 	@echo "TODO"
 
 clean:
