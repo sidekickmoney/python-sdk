@@ -4,7 +4,7 @@ help:
 	@echo "Available commands:"
 	@echo ""
 	@echo "    help:             Show this page"
-	@echo "    setup:            Setup the project"
+	@echo "    setup:            Setup the environment"
 	@echo "    test:             Run fast tests"
 	@echo "    all-test:         Run all tests"
 	@echo "    acceptance-test:  Run acceptance tests"
