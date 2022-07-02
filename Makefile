@@ -33,28 +33,28 @@ test: lint unit-test integration-test acceptance-test
 all-test: lint unit-test integration-test acceptance-test property-test load-test performance-test system-test
 
 acceptance-test: .venv
-	. .venv/bin/activate && \
-	pytest -vv tests/acceptance
+#	. .venv/bin/activate && \
+#	pytest -vv tests/acceptance
 
 integration-test: .venv
-	. .venv/bin/activate && \
-	pytest -vv tests/integration
+#	. .venv/bin/activate && \
+#	pytest -vv tests/integration
 
 load-test: .venv
-	. .venv/bin/activate && \
-	pytest -vv tests/load
+#	. .venv/bin/activate && \
+#	pytest -vv tests/load
 
 performance-test: .venv
-	. .venv/bin/activate && \
-	pytest -vv tests/performance
+#	. .venv/bin/activate && \
+#	pytest -vv tests/performance
 
 property-test: .venv
 	. .venv/bin/activate && \
 	pytest -vv tests/property
 
 system-test: .venv
-	. .venv/bin/activate && \
-	pytest -vv tests/system
+#	. .venv/bin/activate && \
+#	pytest -vv tests/system
 
 unit-test: .venv
 	. .venv/bin/activate && \
