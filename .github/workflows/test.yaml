@@ -6,7 +6,6 @@ on:
       - master
 
 
-# TODO(lijok): cache dependencies
 jobs:
   test:
     name: test ${{ matrix.os }} python${{ matrix.python-version }}
@@ -33,6 +32,12 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: cache python dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: python-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
       - name: run tests
         run: make all-test PYTHON_VERSION=${{ matrix.python-version }}
