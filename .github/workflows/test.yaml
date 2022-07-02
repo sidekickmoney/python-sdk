@@ -8,12 +8,13 @@ on:
 
 # TODO(lijok): cache dependencies
 # TODO(lijok): can we overwrite job names?
-# TODO(lijok): kill all jobs as soon as one fails
 jobs:
   test:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: true
+
       matrix:
         os:
           - ubuntu-latest
