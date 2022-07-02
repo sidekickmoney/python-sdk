@@ -28,9 +28,9 @@ help:
 	python -m pip install --upgrade pip setuptools wheel && \
 	python -m pip install --editable .[dev,test] --config-settings editable-mode=strict
 
-test: acceptance-test integration-test unit-test
+test: lint acceptance-test integration-test unit-test
 
-all-test: acceptance-test integration-test load-test performance-test property-test system-test unit-test
+all-test: lint acceptance-test integration-test load-test performance-test property-test system-test unit-test
 
 acceptance-test: .venv
 	. .venv/bin/activate && \
