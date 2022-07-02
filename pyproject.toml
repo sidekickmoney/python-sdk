@@ -63,6 +63,10 @@ test = [
     "pytest-asyncio",
 ]
 
+hashing = [
+    "argon2-cffi>=21.3"
+]
+
 [tool.setuptools]
 zip-safe = true  # TODO(lijok): this is likely to be false soon-ish
 
