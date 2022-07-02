@@ -7,7 +7,8 @@ on:
 
 
 # TODO(lijok): cache dependencies
-# TODO(lijok): resolvee conflict between matrix.python-version and hardcoded python version in Makefile
+# TODO(lijok): can we overwrite job names?
+# TODO(lijok): kill all jobs as soon as one fails
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -19,8 +20,8 @@ jobs:
           - macos-latest
           - windows-latest
         python-version:
-#          - "3.8"
-#          - "3.9"
+          - "3.8"
+          - "3.9"
           - "3.10"
 
     steps:
@@ -33,4 +34,4 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: run tests
-        run: make all-test
+        run: make all-test PYTHON_VERSION=${{ matrix.python-version }}
