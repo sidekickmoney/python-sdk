@@ -3,23 +3,24 @@ PYTHON_VERSION ?= 3.10
 help:
 	@echo "Available commands:"
 	@echo ""
-	@echo "    help:             Show this page"
-	@echo "    setup:            Setup the environment"
-	@echo "    test:             Run fast tests"
-	@echo "    all-test:         Run all tests"
-	@echo "    acceptance-test:  Run acceptance tests"
-	@echo "    integration-test: Run integration tests"
-	@echo "    load-test:        Run load tests"
-	@echo "    performance-test: Run performance tests"
-	@echo "    property-test:    Run property tests"
-	@echo "    system-test:      Run system tests"
-	@echo "    unit-test:        Run unit tests"
-	@echo "    lint:             Run the linters"
-	@echo "    format:           Format the codebase"
-	@echo "    package:          Package"
-	@echo "    publish:          Publish"
-	@echo "    install:          Install"
-	@echo "    clean:            Cleanup"
+	@echo "    help:              Show this page"
+	@echo "    setup:             Setup the environment"
+	@echo "    test:              Run fast tests"
+	@echo "    test-all:          Run all tests"
+	@echo "    test-all-versions: Run all tests on all versions"
+	@echo "    acceptance-test:   Run acceptance tests"
+	@echo "    integration-test:  Run integration tests"
+	@echo "    load-test:         Run load tests"
+	@echo "    performance-test:  Run performance tests"
+	@echo "    property-test:     Run property tests"
+	@echo "    system-test:       Run system tests"
+	@echo "    unit-test:         Run unit tests"
+	@echo "    lint:              Run the linters"
+	@echo "    format:            Format the codebase"
+	@echo "    package:           Package"
+	@echo "    publish:           Publish"
+	@echo "    install:           Install"
+	@echo "    clean:             Cleanup"
 
 .venv/${PYTHON_VERSION} setup:
 	rm -rf .venv/${PYTHON_VERSION}
@@ -30,7 +31,12 @@ help:
 
 test: lint unit-test integration-test acceptance-test
 
-all-test: lint unit-test integration-test acceptance-test property-test load-test performance-test system-test
+test-all: lint unit-test integration-test acceptance-test property-test load-test performance-test system-test
+
+test-all-versions:
+	make all-test PYTHON_VERSION=3.8
+	make all-test PYTHON_VERSION=3.9
+	make all-test PYTHON_VERSION=3.10
 
 acceptance-test: .venv/${PYTHON_VERSION}
 #	. .venv/${PYTHON_VERSION}/bin/activate && \
