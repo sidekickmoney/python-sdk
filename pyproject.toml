@@ -11,10 +11,7 @@ description = "Python Software Dev Kit"
 authors = [{name = "lijok", email = "lijok@pm.me"}]
 dynamic = ["version"]
 requires-python = ">=3.8"
-dependencies = [
-#    "typing-extensions",
-    "httpx"
-]
+dependencies = []
 readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = [
