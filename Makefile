@@ -89,7 +89,5 @@ install: .venv
 
 clean:
 	@rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info build
-	@find . -name "__pycache__" -type d \
-		-not -path "*/.venv/*" \
-		-not -path "*/.git/*" | xargs rm -rf
+	@find . -name "__pycache__" -type d -not -path "*/.venv/*" -not -path "*/.git/*" | xargs rm -rf
 	@find . -type f -name "*.pyc" -delete
