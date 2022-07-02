@@ -50,7 +50,14 @@ classifiers = [
 "Bug Tracker" = "https://github.com/lijok/python-sdk/issues"
 
 [project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+]
+
 test = [
+    "black",
+    "isort",
     "hypothesis",
     "pytest",
     "pytest-asyncio",

@@ -28,7 +28,7 @@ help:
 	python${PYTHON_VERSION} -m venv .venv
 	. .venv/bin/activate && \
 	python -m pip install --upgrade pip setuptools wheel && \
-	python -m pip install --editable .[test] --config-settings editable-mode=strict
+	python -m pip install --editable .[dev,test] --config-settings editable-mode=strict
 
 test: acceptance-test integration-test unit-test
 
