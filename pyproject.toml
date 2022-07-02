@@ -85,5 +85,6 @@ ignore_errors = true
 # -ra adds a short summary of all test outcomes aside from passed
 # --durations 10 adds a short summary of slowest 10 tests
 # --new-first runs tests on new files first
-addopts = "-ra --durations 10 --new-first"
+# --basetemp .test_artifacts sets the path that the tmp_path fixture will store files in
+addopts = "-ra --durations 10 --new-first --basetemp .test_artifacts"
 asyncio_mode = "auto"
