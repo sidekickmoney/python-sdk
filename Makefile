@@ -21,62 +21,62 @@ help:
 	@echo "    install:          Install"
 	@echo "    clean:            Cleanup"
 
-.venv setup:
-	rm -rf .venv
-	python${PYTHON_VERSION} -m venv .venv
-	. .venv/bin/activate && \
-	python -m pip install --upgrade pip setuptools wheel && \
+.venv/${PYTHON_VERSION} setup:
+	rm -rf .venv/${PYTHON_VERSION}
+	python${PYTHON_VERSION} -m venv --upgrade-deps .venv/${PYTHON_VERSION}
+	. .venv/${PYTHON_VERSION}/bin/activate && \
+#	python -m pip install --upgrade pip setuptools wheel && \
 	python -m pip install --editable .[dev,test,hashing] --config-settings editable-mode=strict
 
 test: lint unit-test integration-test acceptance-test
 
 all-test: lint unit-test integration-test acceptance-test property-test load-test performance-test system-test
 
-acceptance-test: .venv
-#	. .venv/bin/activate && \
+acceptance-test: .venv/${PYTHON_VERSION}
+#	. .venv/${PYTHON_VERSION}/bin/activate && \
 #	pytest -vv tests/acceptance
 
-integration-test: .venv
-#	. .venv/bin/activate && \
+integration-test: .venv/${PYTHON_VERSION}
+#	. .venv/${PYTHON_VERSION}/bin/activate && \
 #	pytest -vv tests/integration
 
-load-test: .venv
-#	. .venv/bin/activate && \
+load-test: .venv/${PYTHON_VERSION}
+#	. .venv/${PYTHON_VERSION}/bin/activate && \
 #	pytest -vv tests/load
 
-performance-test: .venv
-#	. .venv/bin/activate && \
+performance-test: .venv/${PYTHON_VERSION}
+#	. .venv/${PYTHON_VERSION}/bin/activate && \
 #	pytest -vv tests/performance
 
-property-test: .venv
-	. .venv/bin/activate && \
+property-test: .venv/${PYTHON_VERSION}
+	. .venv/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/property
 
-system-test: .venv
-#	. .venv/bin/activate && \
+system-test: .venv/${PYTHON_VERSION}
+#	. .venv/${PYTHON_VERSION}/bin/activate && \
 #	pytest -vv tests/system
 
-unit-test: .venv
-	. .venv/bin/activate && \
+unit-test: .venv/${PYTHON_VERSION}
+	. .venv/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/unit
 
-lint: .venv
-	. .venv/bin/activate && \
+lint: .venv/${PYTHON_VERSION}
+	. .venv/${PYTHON_VERSION}/bin/activate && \
 	black --check . && \
 	isort --check-only .
 
-format: .venv
-	. .venv/bin/activate && \
+format: .venv/${PYTHON_VERSION}
+	. .venv/${PYTHON_VERSION}/bin/activate && \
 	black . && \
 	isort .
 
-package: .venv
+package: .venv/${PYTHON_VERSION}
 	@echo "TODO"
 
-publish: .venv
+publish: .venv/${PYTHON_VERSION}
 	@echo "TODO"
 
-install: .venv
+install: .venv/${PYTHON_VERSION}
 	@echo "TODO"
 
 clean:
