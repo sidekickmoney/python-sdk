@@ -1,3 +1,5 @@
+PYTHON_VERSION := 3.10
+
 help:
 	@echo "Available commands:"
 	@echo ""
@@ -23,7 +25,7 @@ help:
 
 .venv setup:
 	rm -rf .venv
-	python3.10 -m venv .venv
+	python${PYTHON_VERSION} -m venv .venv
 	. .venv/bin/activate && \
 	python -m pip install .[test package]
 
