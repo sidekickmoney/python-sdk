@@ -18,8 +18,6 @@ help:
 	@echo "    format:           Format the codebase"
 	@echo "    package:          Package"
 	@echo "    publish:          Publish"
-	@echo "    build:            Build"
-	@echo "    upload:           Upload"
 	@echo "    install:          Install"
 	@echo "    clean:            Cleanup"
 
@@ -76,12 +74,6 @@ package: .venv
 	@echo "TODO"
 
 publish: .venv
-	@echo "TODO"
-
-build: .venv
-	@echo "TODO"
-
-upload: .venv
 	@echo "TODO"
 
 install: .venv
