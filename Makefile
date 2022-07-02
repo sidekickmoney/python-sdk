@@ -23,9 +23,9 @@ help:
 
 .venv/${PYTHON_VERSION} setup:
 	rm -rf .venv/${PYTHON_VERSION}
-	python${PYTHON_VERSION} -m venv --upgrade-deps .venv/${PYTHON_VERSION}
+	python${PYTHON_VERSION} -m venv .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
-#	python -m pip install --upgrade pip setuptools wheel && \
+	python -m pip install --upgrade pip setuptools wheel && \
 	python -m pip install --editable .[dev,test,hashing] --config-settings editable-mode=strict
 
 test: lint unit-test integration-test acceptance-test
