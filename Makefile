@@ -1,4 +1,4 @@
-PYTHON_VERSION := 3.10
+PYTHON_VERSION ?= 3.10
 
 help:
 	@echo "Available commands:"

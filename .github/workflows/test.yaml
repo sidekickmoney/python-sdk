@@ -40,4 +40,6 @@ jobs:
           key: python-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
       - name: run tests
-        run: make all-test PYTHON_VERSION=${{ matrix.python-version }}
+        run: make all-test
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
