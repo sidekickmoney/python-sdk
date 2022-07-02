@@ -80,6 +80,6 @@ install: .venv/${PYTHON_VERSION}
 	@echo "TODO"
 
 clean:
-	@rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info build .test_artifacts
-	@find . -name "__pycache__" -type d -not -path "*/.venv/*" -not -path "*/.git/*" | xargs rm -rf
-	@find . -type f -name "*.pyc" -delete
+	rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info build .test_artifacts
+	find . -name "__pycache__" -type d -not -path "*/.venv/*" -not -path "*/.git/*" | xargs rm -rf
+	find . -type f -name "*.pyc" -delete
