@@ -64,6 +64,10 @@ hashing = [
     "argon2-cffi>=21.3"
 ]
 
+secrets = [
+    "boto3>=1.24"
+]
+
 [tool.setuptools]
 zip-safe = true  # TODO(lijok): this is likely to be false soon-ish
 

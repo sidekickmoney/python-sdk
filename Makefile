@@ -27,7 +27,7 @@ help:
 	python${PYTHON_VERSION} -m venv .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
 	python -m pip install --upgrade pip setuptools wheel && \
-	python -m pip install --editable .[dev,test,hashing] --config-settings editable-mode=strict
+	python -m pip install --editable .[dev,test,hashing,secrets] --config-settings editable-mode=strict
 
 test: lint unit-test integration-test acceptance-test
 
@@ -43,8 +43,9 @@ acceptance-test: .venv/${PYTHON_VERSION}
 #	pytest -vv tests/acceptance
 
 integration-test: .venv/${PYTHON_VERSION}
-#	. .venv/${PYTHON_VERSION}/bin/activate && \
-#	pytest -vv tests/integration
+	docker-compose up
+	. .venv/${PYTHON_VERSION}/bin/activate && \
+	pytest -vv tests/integration
 
 load-test: .venv/${PYTHON_VERSION}
 #	. .venv/${PYTHON_VERSION}/bin/activate && \
@@ -89,3 +90,4 @@ clean:
 	rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info build .test_artifacts
 	find . -name "__pycache__" -type d -not -path "*/.venv/*" -not -path "*/.git/*" | xargs rm -rf
 	find . -type f -name "*.pyc" -delete
+	docker-compose down

@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+.DS_Store
+.idea/
+.vscode/
+*.egg-info
+build/
+__pypackages__/
+.test_artifacts/
