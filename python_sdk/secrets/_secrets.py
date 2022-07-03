@@ -7,7 +7,7 @@ from python_sdk import config
 # TODO(lijok): something to prevent this from being configured using secrets
 @config.config(prefix="PYTHON_SDK_")
 class _Config:
-    SECRETS_ENGINE: config.Choice["AWS_SM"]
+    SECRETS_ENGINE: typing.Literal["AWS_SM"]
     SECRETS_ENGINE_AWS_SM_SECRET_KEY_ID: typing.Optional[str]
     SECRETS_ENGINE_AWS_SM_SECRET_ACCESS_KEY: typing.Optional[str]
     SECRETS_ENGINE_AWS_SM_SESSION_TOKEN: typing.Optional[str]

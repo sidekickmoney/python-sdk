@@ -25,9 +25,9 @@ def test_config() -> None:
     os.environ["TEST_OPTIONAL_LIST_OF_INTS"] = "1,1"
     os.environ["TEST_OPTIONAL_LIST_OF_FLOATS"] = "1.5,1.5"
     os.environ["TEST_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS"] = "dGVzdA==,dGVzdA=="
-    os.environ["TEST_CHOICE"] = "ONE"
-    os.environ["TEST_OPTIONAL_CHOICE"] = "ONE"
-    os.environ["TEST_OPTIONAL_LIST_OF_CHOICES"] = "ONE,TWO"
+    os.environ["TEST_LITERAL"] = "ONE"
+    os.environ["TEST_OPTIONAL_LITERAL"] = "ONE"
+    os.environ["TEST_OPTIONAL_LIST_OF_LITERALS"] = "ONE,TWO"
 
     @config.config(prefix="TEST_")
     class Config:
@@ -52,9 +52,9 @@ def test_config() -> None:
         OPTIONAL_LIST_OF_INTS: typing.Optional[typing.List[int]]
         OPTIONAL_LIST_OF_FLOATS: typing.Optional[typing.List[float]]
         OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[typing.List[config.Base64EncodedString]]
-        CHOICE: config.Choice["ONE", "TWO"]
-        OPTIONAL_CHOICE: typing.Optional[config.Choice["ONE", "TWO"]]
-        OPTIONAL_LIST_OF_CHOICES: typing.Optional[typing.List[config.Choice["ONE", "TWO"]]]
+        LITERAL: typing.Literal["ONE", "TWO"]
+        OPTIONAL_LITERAL: typing.Optional[typing.Literal["ONE", "TWO"]]
+        OPTIONAL_LIST_OF_LITERALS: typing.Optional[typing.List[typing.Literal["ONE", "TWO"]]]
 
         # These will not be set, but have defaults, so should pick them up
         DEFAULT_STR: str = "test"
@@ -83,9 +83,9 @@ def test_config() -> None:
             "dGVzdA==",
             "dGVzdA==",
         ]
-        DEFAULT_CHOICE: config.Choice["ONE", "TWO"] = "ONE"
-        DEFAULT_OPTIONAL_CHOICE: typing.Optional[config.Choice["ONE", "TWO"]] = "ONE"
-        DEFAULT_OPTIONAL_LIST_OF_CHOICES: typing.Optional[typing.List[config.Choice["ONE", "TWO"]]] = ["ONE", "TWO"]
+        DEFAULT_LITERAL: typing.Literal["ONE", "TWO"] = "ONE"
+        DEFAULT_OPTIONAL_LITERAL: typing.Optional[typing.Literal["ONE", "TWO"]] = "ONE"
+        DEFAULT_OPTIONAL_LIST_OF_LITERALS: typing.Optional[typing.List[typing.Literal["ONE", "TWO"]]] = ["ONE", "TWO"]
 
         # These will not be set, so should become Nones
         UNSET_OPTIONAL_STR: typing.Optional[str]
@@ -98,8 +98,8 @@ def test_config() -> None:
         UNSET_OPTIONAL_LIST_OF_INTS: typing.Optional[typing.List[int]]
         UNSET_OPTIONAL_LIST_OF_FLOATS: typing.Optional[typing.List[float]]
         UNSET_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[typing.List[config.Base64EncodedString]]
-        UNSET_OPTIONAL_CHOICE: typing.Optional[config.Choice["ONE", "TWO"]]
-        UNSET_OPTIONAL_LIST_OF_CHOICES: typing.Optional[typing.List[config.Choice["ONE", "TWO"]]]
+        UNSET_OPTIONAL_LITERAL: typing.Optional[typing.Literal["ONE", "TWO"]]
+        UNSET_OPTIONAL_LIST_OF_LITERALS: typing.Optional[typing.List[typing.Literal["ONE", "TWO"]]]
 
     assert Config.STR == "test"
     assert Config.INT == 1
@@ -121,9 +121,9 @@ def test_config() -> None:
     assert Config.OPTIONAL_LIST_OF_INTS == [1, 1]
     assert Config.OPTIONAL_LIST_OF_FLOATS == [1.5, 1.5]
     assert Config.OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS == ["dGVzdA==", "dGVzdA=="]
-    assert Config.CHOICE == "ONE"
-    assert Config.OPTIONAL_CHOICE == "ONE"
-    assert Config.OPTIONAL_LIST_OF_CHOICES == ["ONE", "TWO"]
+    assert Config.LITERAL == "ONE"
+    assert Config.OPTIONAL_LITERAL == "ONE"
+    assert Config.OPTIONAL_LIST_OF_LITERALS == ["ONE", "TWO"]
 
     assert Config.DEFAULT_STR == "test"
     assert Config.DEFAULT_INT == 1
@@ -145,9 +145,9 @@ def test_config() -> None:
     assert Config.DEFAULT_OPTIONAL_LIST_OF_INTS == [1, 1]
     assert Config.DEFAULT_OPTIONAL_LIST_OF_FLOATS == [1.5, 1.5]
     assert Config.DEFAULT_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS == ["dGVzdA==", "dGVzdA=="]
-    assert Config.DEFAULT_CHOICE == "ONE"
-    assert Config.DEFAULT_OPTIONAL_CHOICE == "ONE"
-    assert Config.DEFAULT_OPTIONAL_LIST_OF_CHOICES == ["ONE", "TWO"]
+    assert Config.DEFAULT_LITERAL == "ONE"
+    assert Config.DEFAULT_OPTIONAL_LITERAL == "ONE"
+    assert Config.DEFAULT_OPTIONAL_LIST_OF_LITERALS == ["ONE", "TWO"]
 
     assert Config.UNSET_OPTIONAL_STR == None
     assert Config.UNSET_OPTIONAL_INT == None
@@ -159,5 +159,5 @@ def test_config() -> None:
     assert Config.UNSET_OPTIONAL_LIST_OF_INTS == None
     assert Config.UNSET_OPTIONAL_LIST_OF_FLOATS == None
     assert Config.UNSET_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS == None
-    assert Config.UNSET_OPTIONAL_CHOICE == None
-    assert Config.UNSET_OPTIONAL_LIST_OF_CHOICES == None
+    assert Config.UNSET_OPTIONAL_LITERAL == None
+    assert Config.UNSET_OPTIONAL_LIST_OF_LITERALS == None

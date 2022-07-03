@@ -12,7 +12,6 @@ _ENCODED_LIST_SEPARATOR = ","
 
 Base64EncodedString = typing.TypeVar("Base64EncodedString", bound=str)
 UnvalidatedDict = typing.TypeVar("UnvalidatedDict", bound=typing.Dict[typing.Any, typing.Any])
-Choice = typing.Literal  # alias for when we get variadic generics support
 
 
 def _str_to_str(string: str) -> str:
@@ -67,10 +66,10 @@ def _str_to_base64_encoded_string(string: str) -> str:
     return string
 
 
-def _str_to_choice(string: str, choice: typing.Type) -> str:
+def _str_to_literal(string: str, literal: typing.Type) -> str:
     if string.strip() != string:
         raise ValueError("Leading or trailing whitespace detected")
-    if string not in typing.get_args(choice):
+    if string not in typing.get_args(literal):
         raise ValueError()
     return string
 
@@ -111,15 +110,15 @@ def _str_to_list_of_base64_encoded_strings(string: str) -> typing.List[str]:
     return maybe_base64_encoded_strings
 
 
-def _str_to_list_of_choices(string: str, choice: typing.Type) -> typing.List[str]:
+def _str_to_list_of_literals(string: str, literal: typing.Type) -> typing.List[str]:
     if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
         raise ValueError()
     strings = string.split(_ENCODED_LIST_SEPARATOR)
-    choice_options = typing.get_args(choice)
+    literal_options = typing.get_args(literal)
     for string in strings:
-        if string not in choice_options:
+        if string not in literal_options:
             raise ValueError()
     return strings
 
@@ -161,9 +160,9 @@ def _str_to_optional_base64_encoded_string(string: typing.Optional[str]) -> typi
     return None
 
 
-def _str_to_optional_choice(string: typing.Optional[str], choice: typing.Type) -> typing.Optional[str]:
+def _str_to_optional_literal(string: typing.Optional[str], literal: typing.Type) -> typing.Optional[str]:
     if string:
-        return _str_to_choice(string=string, choice=choice)
+        return _str_to_literal(string=string, literal=literal)
     return None
 
 
@@ -199,17 +198,17 @@ def _str_to_optional_list_of_base64_encoded_strings(
     return None
 
 
-def _str_to_optional_list_of_choices(
-    string: typing.Optional[str], choice: typing.Type
+def _str_to_optional_list_of_literals(
+    string: typing.Optional[str], literal: typing.Type
 ) -> typing.Optional[typing.List[str]]:
     if string:
-        return _str_to_list_of_choices(string=string, choice=choice)
+        return _str_to_list_of_literals(string=string, literal=literal)
     return None
 
 
-# in addition to the below, we support Choice[...], List[Choice[...]] and Optional[List[Choice[...]]]
+# in addition to the below, we support Literal[...], List[Literal[...]] and Optional[List[Literal[...]]]
 # however, as they are variadic types, we can't have them in the lookup table below
-# therefore, functions in this module will have to provide special support for Choice
+# therefore, functions in this module will have to provide special support for Literal
 _DECODERS_LOOKUP_TABLE = {
     # primitives
     str: _str_to_str,
@@ -242,52 +241,54 @@ def type_is_supported(data_type: typing.Type) -> bool:
     if data_type in _DECODERS_LOOKUP_TABLE:
         return True
     if (
-        _is_choice(data_type=data_type)
-        or _is_optional_choice(data_type=data_type)
-        or _is_list_of_choices(data_type=data_type)
-        or _is_optional_list_of_choices(data_type=data_type)
+        _is_literal(data_type=data_type)
+        or _is_optional_literal(data_type=data_type)
+        or _is_list_of_literals(data_type=data_type)
+        or _is_optional_list_of_literals(data_type=data_type)
     ):
         return True
     return False
 
 
-def _is_choice(data_type: typing.Type) -> bool:
-    # for a type to be considered Choice it must be a typing.Literal (aliased as Choice) with all arguments
+def _is_literal(data_type: typing.Type) -> bool:
+    # for a type to be considered Literal it must be a typing.Literal with all arguments
     # being upper-cased strings
-    if typing.get_origin(data_type) == Choice:
-        choice_options = list(typing.get_args(data_type))
-        if len({type(arg) for arg in choice_options}) == 1:
-            if type(choice_options[0]) == str:
+    if typing.get_origin(data_type) == typing.Literal:
+        literal_options = list(typing.get_args(data_type))
+        if len({type(arg) for arg in literal_options}) == 1:
+            if type(literal_options[0]) == str:
 
-                choice_options_uppercased = [choice_option.upper() for choice_option in choice_options]
-                if choice_options_uppercased == choice_options:
+                literal_options_uppercased = [literal_option.upper() for literal_option in literal_options]
+                if literal_options_uppercased == literal_options:
                     return True
     return False
 
 
-def _is_optional_choice(data_type: typing.Type) -> bool:
-    return typing.get_origin(data_type) == typing.Union and _is_choice(data_type=typing.get_args(data_type)[0])
+def _is_optional_literal(data_type: typing.Type) -> bool:
+    return typing.get_origin(data_type) == typing.Union and _is_literal(data_type=typing.get_args(data_type)[0])
 
 
-def _is_list_of_choices(data_type: typing.Type) -> bool:
-    return typing.get_origin(data_type) == list and _is_choice(data_type=typing.get_args(data_type)[0])
+def _is_list_of_literals(data_type: typing.Type) -> bool:
+    return typing.get_origin(data_type) == list and _is_literal(data_type=typing.get_args(data_type)[0])
 
 
-def _is_optional_list_of_choices(data_type: typing.Type) -> bool:
-    return typing.get_origin(data_type) == typing.Union and _is_list_of_choices(data_type=typing.get_args(data_type)[0])
+def _is_optional_list_of_literals(data_type: typing.Type) -> bool:
+    return typing.get_origin(data_type) == typing.Union and _is_list_of_literals(
+        data_type=typing.get_args(data_type)[0]
+    )
 
 
 def _decode_str(string: str, data_type: typing.Type) -> typing.Any:
-    if _is_choice(data_type=data_type):
-        return _str_to_choice(string=string, choice=data_type)
-    elif _is_optional_choice(data_type=data_type):
-        return _str_to_optional_choice(string=string, choice=typing.get_args(data_type)[0])
-    elif _is_list_of_choices(data_type=data_type):
-        return _str_to_list_of_choices(string=string, choice=typing.get_args(data_type)[0])
-    elif _is_optional_list_of_choices(data_type=data_type):
-        return _str_to_optional_list_of_choices(
+    if _is_literal(data_type=data_type):
+        return _str_to_literal(string=string, literal=data_type)
+    elif _is_optional_literal(data_type=data_type):
+        return _str_to_optional_literal(string=string, literal=typing.get_args(data_type)[0])
+    elif _is_list_of_literals(data_type=data_type):
+        return _str_to_list_of_literals(string=string, literal=typing.get_args(data_type)[0])
+    elif _is_optional_list_of_literals(data_type=data_type):
+        return _str_to_optional_list_of_literals(
             string=string,
-            choice=typing.get_args(typing.get_args(data_type)[0])[0],
+            literal=typing.get_args(typing.get_args(data_type)[0])[0],
         )
     else:
         decoder = _DECODERS_LOOKUP_TABLE[data_type]
