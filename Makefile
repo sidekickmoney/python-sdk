@@ -43,7 +43,7 @@ acceptance-test: .venv/${PYTHON_VERSION}
 #	pytest -vv tests/acceptance
 
 integration-test: .venv/${PYTHON_VERSION}
-	docker-compose up
+	docker-compose up -d
 	. .venv/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/integration
 
