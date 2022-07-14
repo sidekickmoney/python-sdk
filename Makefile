@@ -16,7 +16,7 @@ help:
 	@echo "    system-test:       Run system tests"
 	@echo "    unit-test:         Run unit tests"
 	@echo "    lint:              Run the linters"
-	@echo "    format:            Format the codebase"
+	@echo "    fmt:               Format the codebase"
 	@echo "    package:           Package"
 	@echo "    publish:           Publish"
 	@echo "    install:           Install"
@@ -72,7 +72,7 @@ lint: .venv/${PYTHON_VERSION}
 	black --check . && \
 	isort --check-only .
 
-format: .venv/${PYTHON_VERSION}
+fmt: .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
 	black . && \
 	isort .
