@@ -210,7 +210,12 @@ def _flush_logs() -> None:
 
 def _flush_and_close_handlers() -> None:
     for handler in _root_logger.handlers:
-        handler.flush()
+        try:
+            handler.flush()
+        except ValueError:
+            # handler might be closed already
+            # this is only a problem when running pytest as it redirects stdout
+            pass
         handler.close()
 
 
@@ -236,6 +241,8 @@ def _set_terminating_flag() -> None:
 
 def remove_existing_handlers() -> None:
     for _existing_handler in _root_logger.handlers:
+        # TODO(lijok): are we messing up pytest by closing its handlers?
+        _existing_handler.flush()
         _existing_handler.close()
         _root_logger.removeHandler(_existing_handler)
 
