@@ -6,31 +6,31 @@ from python_sdk import config
 
 # defaults are based on the RFC9106 high memory recommendation
 # https://www.rfc-editor.org/rfc/rfc9106.html#name-parameter-choice
-@config.config(prefix="PYTHON_SDK_")
+@config.config(prefix="PYTHON_SDK_HASH_")
 class _Config:
-    HASH_TIME_COST: int = 1
-    HASH_MEMORY_COST_KIBIBYTES: int = 2097152  # 2GB
-    HASH_PARALLELISM: int = 4
-    HASH_HASH_LENGTH: int = 32
-    HASH_SALT_LENGTH: int = 16
+    TIME_COST: int = 1
+    MEMORY_COST_KIBIBYTES: int = 2097152  # 2GB
+    PARALLELISM: int = 4
+    HASH_LENGTH: int = 32
+    SALT_LENGTH: int = 16
 
 
 _log.info(
     "Hashing configured",
-    TIME_COST=_Config.HASH_TIME_COST,
-    MEMORY_COST=_Config.HASH_MEMORY_COST_KIBIBYTES,
-    PARALLELISM=_Config.HASH_PARALLELISM,
-    HASH_LENGTH=_Config.HASH_HASH_LENGTH,
-    SALT_LENGTH=_Config.HASH_SALT_LENGTH,
+    TIME_COST=_Config.TIME_COST,
+    MEMORY_COST=_Config.MEMORY_COST_KIBIBYTES,
+    PARALLELISM=_Config.PARALLELISM,
+    HASH_LENGTH=_Config.HASH_LENGTH,
+    SALT_LENGTH=_Config.SALT_LENGTH,
     TYPE="Argon2id",
 )
 
 _HASHER = argon2.PasswordHasher(
-    time_cost=_Config.HASH_TIME_COST,
-    memory_cost=_Config.HASH_MEMORY_COST_KIBIBYTES,
-    parallelism=_Config.HASH_PARALLELISM,
-    hash_len=_Config.HASH_HASH_LENGTH,
-    salt_len=_Config.HASH_SALT_LENGTH,
+    time_cost=_Config.TIME_COST,
+    memory_cost=_Config.MEMORY_COST_KIBIBYTES,
+    parallelism=_Config.PARALLELISM,
+    hash_len=_Config.HASH_LENGTH,
+    salt_len=_Config.SALT_LENGTH,
     encoding="utf-8",
     type=argon2.Type.ID,
 )

@@ -6,6 +6,7 @@ def b64url_encode(s: bytes) -> bytes:
     return base64.urlsafe_b64encode(s=s).rstrip(b"=")
 
 
+# TODO: add validation
 def b64url_decode(s: typing.Union[bytes, str]) -> bytes:
     if isinstance(s, bytes):
         return _b64url_decode_bytes(s)
