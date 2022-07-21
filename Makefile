@@ -69,13 +69,11 @@ unit-test: .venv/${PYTHON_VERSION}
 
 lint: .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
-	black --check . && \
-	isort --check-only .
+	python-sdk fmt --files . --check
 
 fmt: .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
-	black . && \
-	isort .
+	python-sdk fmt --files .
 
 package: .venv/${PYTHON_VERSION}
 	@echo "TODO"
