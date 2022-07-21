@@ -4,6 +4,7 @@ Base implementation of structured logging api's.
 
 import atexit
 import contextvars
+import datetime
 import io
 import json
 import logging
@@ -115,7 +116,8 @@ class StructuredLogMachineReadableFormatter(_StructuredLogPreFormatter):
 class StructuredLogHumanReadableFormatter(_StructuredLogPreFormatter):
     def format(self, record: logging.LogRecord) -> str:
         data = super().format(record=record)
-        text = f"{data['timestamp']} {data['log_level']}\t\t{data['message']}"
+        timestamp = datetime.datetime.fromtimestamp(data["timestamp"]).replace(microsecond=0)
+        text = f"{timestamp} {data['log_level']}\t\t{data['message']}"
         for key, val in data.items():
             if key not in ["timestamp", "log_level", "message"]:
                 text += f" {key}={val}"
