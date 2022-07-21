@@ -2,6 +2,7 @@ import logging
 
 
 def pytest_sessionfinish() -> None:
+    # https://github.com/pytest-dev/pytest/issues/5282
     # Suppress logging errors after the session finishes.
     # Currently, pytest redirects sys.std* to its custom implementation for capsys etc.
     # This means, that our atexit handlers, which flush logs in the _log package, can end up attempting to write to a
