@@ -69,6 +69,10 @@ secrets = [
     "boto3>=1.24"
 ]
 
+[project.scripts]
+python-sdk = "python_sdk._cli:main"
+
+
 [tool.setuptools]
 zip-safe = true  # TODO(lijok): this is likely to be false soon-ish
 
