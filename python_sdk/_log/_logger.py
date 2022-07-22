@@ -138,6 +138,7 @@ def _log(
     level: int,
     message: typing.Any,
     exception: typing.Union[BaseException, bool] = None,
+    _stack_level: int = 2,
     **kwargs: typing.Any,
 ) -> None:
     if not _root_logger.isEnabledFor(level=level):
@@ -152,33 +153,34 @@ def _log(
     # in the event that the program terminates before logging is configured, say, because we encountered an error
     # during logging configuration, we will flush the logs as well
     if _LOGGING_CONFIGURED or _TERMINATING:
-        _root_logger.log(level=level, msg=message, exc_info=exception, extra={"context": data})
+        _root_logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
     else:
+        # TODO(lijok): Here we lose stack info. We should maybe manually override?
         _LOG_CACHE.append((level, message, exception, kwargs))
 
 
 def critical(message: typing.Any, **kwargs: typing.Any) -> None:
-    _log(level=logging.CRITICAL, message=message, **kwargs)
+    _log(level=logging.CRITICAL, message=message, _stack_level=3, **kwargs)
 
 
 def error(message: typing.Any, **kwargs: typing.Any) -> None:
-    _log(level=logging.ERROR, message=message, **kwargs)
+    _log(level=logging.ERROR, message=message, _stack_level=3, **kwargs)
 
 
 def warning(message: typing.Any, **kwargs: typing.Any) -> None:
-    _log(level=logging.WARNING, message=message, **kwargs)
+    _log(level=logging.WARNING, message=message, _stack_level=3, **kwargs)
 
 
 def info(message: typing.Any, **kwargs: typing.Any) -> None:
-    _log(level=logging.INFO, message=message, **kwargs)
+    _log(level=logging.INFO, message=message, _stack_level=3, **kwargs)
 
 
 def debug(message: typing.Any, **kwargs: typing.Any) -> None:
-    _log(level=logging.DEBUG, message=message, **kwargs)
+    _log(level=logging.DEBUG, message=message, _stack_level=3, **kwargs)
 
 
 def exception(message: typing.Any, exception: typing.Optional[BaseException] = None, **kwargs: typing.Any) -> None:
-    _log(level=logging.ERROR, message=message, exception=exception or sys.exc_info(), **kwargs)
+    _log(level=logging.ERROR, message=message, exception=exception or sys.exc_info(), _stack_level=3, **kwargs)
 
 
 def bind(**kwargs: typing.Any) -> None:
