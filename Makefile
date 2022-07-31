@@ -7,7 +7,7 @@ help:
 	@echo "    setup:             Setup the environment"
 	@echo "    test:              Run fast tests"
 	@echo "    test-all:          Run all tests"
-	@echo "    test-all-versions: Run all tests on all versions"
+	@echo "    test-all-versions: Run all tests on all supported versions"
 	@echo "    acceptance-test:   Run acceptance tests"
 	@echo "    integration-test:  Run integration tests"
 	@echo "    load-test:         Run load tests"
