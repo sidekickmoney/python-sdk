@@ -39,8 +39,7 @@ test-all-versions:
 	make all-test PYTHON_VERSION=3.10
 
 acceptance-test: .venv/${PYTHON_VERSION}
-#	. .venv/${PYTHON_VERSION}/bin/activate && \
-#	pytest -vv tests/acceptance
+	@echo "Nothing to do"
 
 integration-test: .venv/${PYTHON_VERSION}
 	docker-compose up -d
@@ -48,20 +47,17 @@ integration-test: .venv/${PYTHON_VERSION}
 	pytest -vv tests/integration
 
 load-test: .venv/${PYTHON_VERSION}
-#	. .venv/${PYTHON_VERSION}/bin/activate && \
-#	pytest -vv tests/load
+	@echo "Nothing to do"
 
 performance-test: .venv/${PYTHON_VERSION}
-#	. .venv/${PYTHON_VERSION}/bin/activate && \
-#	pytest -vv tests/performance
+	@echo "Nothing to do"
 
 property-test: .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/property
 
 system-test: .venv/${PYTHON_VERSION}
-#	. .venv/${PYTHON_VERSION}/bin/activate && \
-#	pytest -vv tests/system
+	@echo "Nothing to do"
 
 unit-test: .venv/${PYTHON_VERSION}
 	. .venv/${PYTHON_VERSION}/bin/activate && \
@@ -76,13 +72,13 @@ fmt: .venv/${PYTHON_VERSION}
 	python-sdk fmt --files .
 
 package: .venv/${PYTHON_VERSION}
-	@echo "TODO"
+	@echo "Not implemented"
 
 publish: .venv/${PYTHON_VERSION}
-	@echo "TODO"
+	@echo "Not implemented"
 
 install: .venv/${PYTHON_VERSION}
-	@echo "TODO"
+	@echo "Not implemented"
 
 clean:
 	rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info build .test_artifacts
