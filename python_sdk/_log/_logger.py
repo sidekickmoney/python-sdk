@@ -47,7 +47,8 @@ class _StructuredLogPreFormatter:
         self.include_thread_name = include_thread_name
 
     def format(self, record: logging.LogRecord) -> typing.Dict[str, typing.Any]:
-        data = {"log_level": record.levelname, "message": record.msg, "timestamp": record.created}
+        timestamp = datetime.datetime.fromtimestamp(record.created).replace(tzinfo=datetime.timezone.utc)
+        data = {"log_level": record.levelname, "message": record.msg, "timestamp": timestamp}
         if record.args:
             data["message"] = record.msg % record.args
         if self.include_current_log_filename:
@@ -118,9 +119,8 @@ class StructuredLogMachineReadableFormatter(_StructuredLogPreFormatter):
 class StructuredLogHumanReadableFormatter(_StructuredLogPreFormatter):
     def format(self, record: logging.LogRecord) -> str:
         data = super().format(record=record)
-        timestamp = datetime.datetime.fromtimestamp(data["timestamp"]).replace(microsecond=0)
         padding = max(60 - len(data["message"]), 0)
-        text = f"{timestamp} [{data['log_level']}\t] {data['message']} {' ' * padding}"
+        text = f"{data['timestamp']} [{data['log_level']}\t] {data['message']} {' ' * padding}"
         for key, val in data.items():
             if key not in ["timestamp", "log_level", "message"]:
                 text += f" {key}={val}"
