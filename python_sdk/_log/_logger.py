@@ -209,6 +209,7 @@ def _cleanup() -> None:
 
 
 def _flush_logs() -> None:
+    debug("Flushing logs", number_of_logs=len(_LOG_CACHE))
     while _LOG_CACHE:
         level, message, exception, kwargs = _LOG_CACHE.pop(0)
         _log(level=level, message=message, exception=exception, **kwargs)
