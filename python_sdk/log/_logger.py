@@ -60,9 +60,7 @@ else:
     _log.critical(f"Log destination {_Config.DESTINATION} not implemented")
     sys.exit(1)
 
-_log.remove_existing_handlers()
-_log.add_handler(handler=_handler)
-
+_log.set_handlers(handlers=[_handler])
 _log.set_logging_configured()
 
 _log.info(

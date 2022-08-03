@@ -15,8 +15,9 @@ import typing
 
 _LOGGING_CONFIGURED: bool = False
 _TERMINATING: bool = False
-_LOG_CACHE: typing.List[typing.Tuple[int, str, typing.Union[BaseException, bool], typing.Dict[str, typing.Any]]] = []
+_LOG_STASH: typing.List[logging.LogRecord] = []
 
+_HANDLERS: typing.List[logging.Handler] = []
 _LISTENERS: typing.List[logging.handlers.QueueListener] = []
 
 _DEFAULT_CONTEXT_VALUE_FACTORY = dict
@@ -127,6 +128,21 @@ class StructuredLogHumanReadableFormatter(_StructuredLogPreFormatter):
         return text
 
 
+class _StreamHandler(logging.StreamHandler):
+    def emit(self, record: logging.LogRecord) -> None:
+        # this module is the base logging implementation, that is intended to be configured by the public "log" package
+        # however, before it is actually configured, other packages may need to log i.e. the "config" package
+        # therefore, in order to emit as many logs with the correct configuration as possible, until logging is
+        # configured, we will write logs to a stash, which we intend to flush after logging is configured
+        # in the event that the program terminates before logging is configured, say, because we encountered an error
+        # during logging configuration, we will flush the logs as well
+
+        if _LOGGING_CONFIGURED or _TERMINATING:
+            super().emit(record=record)
+        else:
+            _LOG_STASH.append(record)
+
+
 def _merge_context(**kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
     data = kwargs
     for key, val in _CONTEXT.get().items():
@@ -145,18 +161,7 @@ def _log(
         return
 
     data = _merge_context(**kwargs)
-
-    # this module is the base logging implementation, that is intended to be configured by the public "log" package
-    # however, before it is actually configured, other packages may need to log i.e. the "config" package
-    # therefore, in order to emit as many logs with the correct configuration as possible, until logging is configured,
-    # we will write logs to a cache, which we intend to flush after logging is configured
-    # in the event that the program terminates before logging is configured, say, because we encountered an error
-    # during logging configuration, we will flush the logs as well
-    if _LOGGING_CONFIGURED or _TERMINATING:
-        _root_logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
-    else:
-        # TODO(lijok): Here we lose stack info. We should maybe manually override?
-        _LOG_CACHE.append((level, message, exception, kwargs))
+    _root_logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
 
 
 def critical(message: typing.Any, **kwargs: typing.Any) -> None:
@@ -209,10 +214,11 @@ def _cleanup() -> None:
 
 
 def _flush_logs() -> None:
-    debug("Flushing logs", number_of_logs=len(_LOG_CACHE))
-    while _LOG_CACHE:
-        level, message, exception, kwargs = _LOG_CACHE.pop(0)
-        _log(level=level, message=message, exception=exception, **kwargs)
+    debug("Flushing logs", number_of_logs=len(_LOG_STASH))
+    while _LOG_STASH:
+        record = _LOG_STASH.pop(0)
+        for handler in _HANDLERS:
+            handler.emit(record=record)
 
 
 def _flush_and_close_handlers() -> None:
@@ -246,7 +252,7 @@ def _set_terminating_flag() -> None:
     _TERMINATING = True
 
 
-def remove_existing_handlers() -> None:
+def _remove_existing_handlers() -> None:
     for _existing_handler in _root_logger.handlers:
         # TODO(lijok): are we messing up pytest by closing its handlers?
         _existing_handler.flush()
@@ -258,8 +264,13 @@ def set_level(level: str) -> None:
     _root_logger.setLevel(level=level)
 
 
-def add_handler(handler: logging.Handler) -> None:
-    _root_logger.addHandler(hdlr=handler)
+def set_handlers(handlers: typing.List[logging.Handler]) -> None:
+    _remove_existing_handlers()
+    for handler in handlers:
+        _root_logger.addHandler(hdlr=handler)
+
+    global _HANDLERS
+    _HANDLERS = handlers
 
 
 def add_listener(listener: logging.handlers.QueueListener) -> None:
@@ -268,13 +279,9 @@ def add_listener(listener: logging.handlers.QueueListener) -> None:
 
 _root_logger = logging.getLogger()
 
-# some runtimes provided by some hosting platforms, such as AWS Lambda, add pre-configured
-# handlers which we want to remove
-remove_existing_handlers()
-
 # default config
-set_level(level="INFO")
+set_level(level="DEBUG")
 _pre_config_formatter = StructuredLogMachineReadableFormatter()
-_pre_config_handler = logging.StreamHandler(stream=sys.stdout)
+_pre_config_handler = _StreamHandler(stream=sys.stdout)
 _pre_config_handler.setFormatter(fmt=_pre_config_formatter)
-add_handler(handler=_pre_config_handler)
+set_handlers(handlers=[_pre_config_handler])
