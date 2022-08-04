@@ -4,9 +4,9 @@ import pathlib
 import typing
 
 from python_sdk import _log
-from python_sdk import types
 
 from . import _config_decoder
+from . import _optional
 
 _CONFIG_DOCUMENT_FILE_LINE_SEPARATOR = "\n"
 _CONFIG_DOCUMENT_KEY_VALUE_SEPARATOR = "="
@@ -197,7 +197,7 @@ def _apply_config_to_config_class(cls: _ConfigProtocol, config: typing.Dict[str,
     unset = object()
     for config_option, data_type in cls.__annotations__.items():
         default = getattr(cls, config_option, unset)
-        config_option_is_optional = types.is_optional_type(data_type=data_type)
+        config_option_is_optional = _optional._is_optional_type(data_type=data_type)
         config_value = config.get(config_option, unset)
 
         if config_value is not unset:

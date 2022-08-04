@@ -6,7 +6,7 @@ import base64
 import json
 import typing
 
-from python_sdk import types
+from . import _optional
 
 _ENCODED_LIST_SEPARATOR = ","
 
@@ -298,7 +298,7 @@ def _decode_str(string: str, data_type: typing.Type) -> typing.Any:
 def decode_config_value(maybe_string: typing.Optional[str], data_type: typing.Type) -> typing.Any:
     if not type_is_supported(data_type=data_type):
         raise TypeError(f"Type {data_type} is not supported")
-    if maybe_string is None and not types.is_optional_type(data_type=data_type):
+    if maybe_string is None and not _optional._is_optional_type(data_type=data_type):
         # got None for a non-optional type
         raise ValueError()
     string = typing.cast(str, maybe_string)  # TODO(lijok): fix this hack

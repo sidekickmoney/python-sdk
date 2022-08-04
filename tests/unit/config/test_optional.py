@@ -2,7 +2,7 @@ import typing
 
 import pytest
 
-from python_sdk import types
+from python_sdk.config import _optional
 
 
 @pytest.mark.parametrize(
@@ -23,4 +23,4 @@ from python_sdk import types
     ],
 )
 def test_is_optional_type(data_type: typing.Type, expected_result: bool) -> None:
-    assert types.is_optional_type(data_type=data_type) is expected_result
+    assert _optional._is_optional_type(data_type=data_type) is expected_result
