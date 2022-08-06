@@ -7,10 +7,8 @@ help:
 	@echo "    setup:             Setup the environment"
 	@echo "    test:              Run fast tests"
 	@echo "    test-all:          Run all tests"
-	@echo "    test-all-versions: Run all tests on all supported versions"
 	@echo "    acceptance-test:   Run acceptance tests"
 	@echo "    integration-test:  Run integration tests"
-	@echo "    load-test:         Run load tests"
 	@echo "    performance-test:  Run performance tests"
 	@echo "    property-test:     Run property tests"
 	@echo "    system-test:       Run system tests"
@@ -21,6 +19,11 @@ help:
 	@echo "    publish:           Publish"
 	@echo "    install:           Install"
 	@echo "    clean:             Cleanup"
+	@echo ""
+	@echo "Project-specific commands:"
+	@echo ""
+	@echo "    test-all-versions: Run all tests on all supported versions"
+
 
 .venv/${PYTHON_VERSION} setup:
 	rm -rf .venv/${PYTHON_VERSION}
@@ -31,7 +34,7 @@ help:
 
 test: lint unit-test integration-test acceptance-test
 
-test-all: lint unit-test integration-test acceptance-test property-test load-test performance-test system-test
+test-all: lint unit-test integration-test acceptance-test property-test performance-test system-test
 
 test-all-versions:
 	make all-test PYTHON_VERSION=3.8
@@ -45,9 +48,6 @@ integration-test: .venv/${PYTHON_VERSION}
 	docker-compose up -d
 	. .venv/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/integration
-
-load-test: .venv/${PYTHON_VERSION}
-	@echo "Nothing to do"
 
 performance-test: .venv/${PYTHON_VERSION}
 	@echo "Nothing to do"
