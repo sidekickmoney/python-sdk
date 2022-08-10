@@ -24,6 +24,7 @@ jobs:
           - "3.9"
           - "3.10"
         test-type:
+          - "lint"
           - "acceptance-test"
           - "integration-test"
           - "performance-test"
