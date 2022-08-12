@@ -12,7 +12,7 @@ help:
 	@echo "    property-test:     Run property tests"
 	@echo "    functional-test:   Run functional tests"
 	@echo "    security-test:     Run security tests"
-	@echo "    system-test:       Run system tests"
+	@echo "    smoke-test:        Run smoke tests"
 	@echo "    acceptance-test:   Run acceptance tests"
 	@echo "    performance-test:  Run performance tests"
 	@echo "    fmt:               Format the codebase"
@@ -36,7 +36,7 @@ help:
 
 test: unit-test integration-test functional-test acceptance-test
 
-test-all: unit-test integration-test property-test functional-test security-test system-test acceptance-test performance-test
+test-all: unit-test integration-test property-test functional-test security-test smoke-test acceptance-test performance-test
 
 test-all-versions:
 	make all-test PYTHON_VERSION=3.8
@@ -62,7 +62,7 @@ functional-test: .venv/${PYTHON_VERSION}
 security-test: .venv/${PYTHON_VERSION}
 	@echo "Nothing to do"
 
-system-test: .venv/${PYTHON_VERSION}
+smoke-test: .venv/${PYTHON_VERSION}
 	@echo "Nothing to do"
 
 acceptance-test: .venv/${PYTHON_VERSION}
