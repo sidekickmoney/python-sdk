@@ -48,6 +48,11 @@ jobs:
           path: .venv
           key: python-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
+      - name: setup
+        run: make setup
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+
       - name: run tests
         run: make ${{ matrix.test-type }}
         env:
