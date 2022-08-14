@@ -67,7 +67,8 @@ smoke-test: setup
 	@echo "Nothing to do"
 
 acceptance-test: setup
-	@echo "Nothing to do"
+	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
+	pytest -vv tests/acceptance
 
 performance-test: setup
 	@echo "Nothing to do"
