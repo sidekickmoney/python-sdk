@@ -72,10 +72,6 @@ acceptance-test: setup
 performance-test: setup
 	@echo "Nothing to do"
 
-#lint: setup
-#	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
-#	python-sdk fmt --files . --check
-
 fmt: setup
 	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
 	python-sdk fmt --files .
@@ -94,4 +90,4 @@ clean:
 	rm -rf .hypothesis .mypy_cache .pytest_cache testresults.xml .coverage .cache htmlcov *.egg-info build .test_artifacts
 	find . -name "__pycache__" -type d -not -path "*/.venv/*" -not -path "*/.git/*" | xargs rm -rf
 	find . -type f -name "*.pyc" -delete
-	docker-compose down
+	docker-compose down || true
