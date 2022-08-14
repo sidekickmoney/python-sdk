@@ -1,4 +1,5 @@
 PYTHON_VERSION ?= 3.10
+OS := $(shell uname -s)
 
 help:
 	@echo "Available commands:"
@@ -26,13 +27,13 @@ help:
 	@echo "    test-all-versions: Run all tests on all supported versions"
 
 
-# TODO: Manually check if venv exists
-.venv/${PYTHON_VERSION} setup:
-	rm -rf .venv/${PYTHON_VERSION}
-	python${PYTHON_VERSION} -m venv .venv/${PYTHON_VERSION}
-	. .venv/${PYTHON_VERSION}/bin/activate && \
-	python -m pip install --upgrade pip setuptools wheel && \
-	python -m pip install --editable .[dev,test,hashing,secrets] #--config-settings editable-mode=strict
+setup:
+	@if [ ! -d ".venv/${OS}/${PYTHON_VERSION}" ]; then\
+		python${PYTHON_VERSION} -m venv ".venv/${OS}/${PYTHON_VERSION}" &&\
+		. ".venv/${OS}/${PYTHON_VERSION}/bin/activate" &&\
+		python -m pip install --upgrade pip setuptools wheel &&\
+		python -m pip install --editable .[dev,test,hashing,secrets] ;\
+	fi
 
 test: unit-test integration-test functional-test acceptance-test
 
@@ -43,49 +44,49 @@ test-all-versions:
 	make all-test PYTHON_VERSION=3.9
 	make all-test PYTHON_VERSION=3.10
 
-unit-test: .venv/${PYTHON_VERSION}
-	. .venv/${PYTHON_VERSION}/bin/activate && \
+unit-test: setup
+	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/unit
 
-integration-test: .venv/${PYTHON_VERSION}
+integration-test: setup
 	docker-compose up -d
-	. .venv/${PYTHON_VERSION}/bin/activate && \
+	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/integration
 
-property-test: .venv/${PYTHON_VERSION}
-	. .venv/${PYTHON_VERSION}/bin/activate && \
+property-test: setup
+	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
 	pytest -vv tests/property
 
-functional-test: .venv/${PYTHON_VERSION}
+functional-test: setup
 	@echo "Nothing to do"
 
-security-test: .venv/${PYTHON_VERSION}
+security-test: setup
 	@echo "Nothing to do"
 
-smoke-test: .venv/${PYTHON_VERSION}
+smoke-test: setup
 	@echo "Nothing to do"
 
-acceptance-test: .venv/${PYTHON_VERSION}
+acceptance-test: setup
 	@echo "Nothing to do"
 
-performance-test: .venv/${PYTHON_VERSION}
+performance-test: setup
 	@echo "Nothing to do"
 
-#lint: .venv/${PYTHON_VERSION}
-#	. .venv/${PYTHON_VERSION}/bin/activate && \
+#lint: setup
+#	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
 #	python-sdk fmt --files . --check
 
-fmt: .venv/${PYTHON_VERSION}
-	. .venv/${PYTHON_VERSION}/bin/activate && \
+fmt: setup
+	. .venv/${OS}/${PYTHON_VERSION}/bin/activate && \
 	python-sdk fmt --files .
 
-package: .venv/${PYTHON_VERSION}
+package: setup
 	@echo "Not implemented"
 
-publish: .venv/${PYTHON_VERSION}
+publish: setup
 	@echo "Not implemented"
 
-install: .venv/${PYTHON_VERSION}
+install: setup
 	@echo "Not implemented"
 
 clean:
