@@ -1,3 +1,4 @@
+import pathlib
 import typing
 
 import pytest
@@ -68,6 +69,9 @@ from python_sdk.config import _config_decoder
         ("test", _config_decoder.Base64EncodedString, ValueError),
         ("", _config_decoder.Base64EncodedString, ValueError),
         (None, _config_decoder.Base64EncodedString, ValueError),
+        # str_to_path
+        ("/temp", pathlib.Path, pathlib.Path("/temp")),
+        ("/temp/one/two", pathlib.Path, pathlib.Path("/temp/one/two")),
         # str_to_literal
         ("INFO", typing.Literal["INFO"], "INFO"),
         ("DEBUG", typing.Literal["INFO", "DEBUG"], "DEBUG"),
@@ -146,6 +150,8 @@ from python_sdk.config import _config_decoder
         (" ,", typing.List[_config_decoder.Base64EncodedString], ValueError),
         (", ", typing.List[_config_decoder.Base64EncodedString], ValueError),
         (" , ", typing.List[_config_decoder.Base64EncodedString], ValueError),
+        # str_to_list_of_paths
+        ("/temp,/sys", typing.List[pathlib.Path], [pathlib.Path("/temp"), pathlib.Path("/sys")]),
         # str_to_list_of_literals
         ("INFO", typing.List[typing.Literal["INFO"]], ["INFO"]),
         ("DEBUG", typing.List[typing.Literal["INFO", "DEBUG"]], ["DEBUG"]),
@@ -204,6 +210,10 @@ from python_sdk.config import _config_decoder
         (None, typing.Optional[_config_decoder.Base64EncodedString], None),
         (" dGVzdA==", typing.Optional[_config_decoder.Base64EncodedString], ValueError),
         ("dGVzdA== ", typing.Optional[_config_decoder.Base64EncodedString], ValueError),
+        # str_to_optional_path
+        ("/temp", typing.Optional[pathlib.Path], pathlib.Path("/temp")),
+        ("", typing.Optional[pathlib.Path], None),
+        (None, typing.Optional[pathlib.Path], None),
         # str_to_optional_literal
         ("INFO", typing.Optional[typing.Literal["INFO"]], "INFO"),
         ("DEBUG", typing.Optional[typing.Literal["INFO", "DEBUG"]], "DEBUG"),
@@ -270,6 +280,10 @@ from python_sdk.config import _config_decoder
             typing.Optional[typing.List[_config_decoder.Base64EncodedString]],
             ValueError,
         ),
+        # str_to_optional_list_of_paths
+        ("/temp,/sys", typing.Optional[typing.List[pathlib.Path]], [pathlib.Path("/temp"), pathlib.Path("/sys")]),
+        ("", typing.Optional[typing.List[pathlib.Path]], None),
+        (None, typing.Optional[typing.List[pathlib.Path]], None),
         # str_to_optional_list_of_literals
         ("INFO", typing.Optional[typing.List[typing.Literal["INFO"]]], ["INFO"]),
         ("DEBUG", typing.Optional[typing.List[typing.Literal["INFO", "DEBUG"]]], ["DEBUG"]),
