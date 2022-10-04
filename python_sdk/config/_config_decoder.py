@@ -4,6 +4,7 @@ The @config decorator supports a number of types, all of which are listed in the
 """
 import base64
 import json
+import pathlib
 import typing
 
 from . import _optional
@@ -66,6 +67,12 @@ def _str_to_base64_encoded_string(string: str) -> str:
     return string
 
 
+def _str_to_path(string: str) -> pathlib.Path:
+    if not string:
+        raise ValueError()
+    return pathlib.Path(string)
+
+
 def _str_to_literal(string: str, literal: typing.Type) -> str:
     if string.strip() != string:
         raise ValueError("Leading or trailing whitespace detected")
@@ -108,6 +115,12 @@ def _str_to_list_of_base64_encoded_strings(string: str) -> typing.List[str]:
         # check they can be decoded
         base64.b64decode(i, validate=True).decode("utf-8")
     return maybe_base64_encoded_strings
+
+
+def _str_to_list_of_paths(string: str) -> typing.List[pathlib.Path]:
+    if not string:
+        raise ValueError()
+    return [pathlib.Path(path) for path in string.split(_ENCODED_LIST_SEPARATOR)]
 
 
 def _str_to_list_of_literals(string: str, literal: typing.Type) -> typing.List[str]:
@@ -160,6 +173,12 @@ def _str_to_optional_base64_encoded_string(string: typing.Optional[str]) -> typi
     return None
 
 
+def _str_to_optional_path(string: typing.Optional[str]) -> typing.Optional[pathlib.Path]:
+    if string:
+        return _str_to_path(string=string)
+    return None
+
+
 def _str_to_optional_literal(string: typing.Optional[str], literal: typing.Type) -> typing.Optional[str]:
     if string:
         return _str_to_literal(string=string, literal=literal)
@@ -198,6 +217,12 @@ def _str_to_optional_list_of_base64_encoded_strings(
     return None
 
 
+def _str_to_optional_list_of_paths(string: str) -> typing.Optional[typing.List[pathlib.Path]]:
+    if string:
+        return _str_to_list_of_paths(string=string)
+    return None
+
+
 def _str_to_optional_list_of_literals(
     string: typing.Optional[str], literal: typing.Type
 ) -> typing.Optional[typing.List[str]]:
@@ -217,11 +242,13 @@ _DECODERS_LOOKUP_TABLE = {
     bool: _str_to_bool,
     UnvalidatedDict: _str_to_unvalidated_dict,
     Base64EncodedString: _str_to_base64_encoded_string,
+    pathlib.Path: _str_to_path,
     # lists of primitives
     typing.List[str]: _str_to_list_of_strs,
     typing.List[int]: _str_to_list_of_ints,
     typing.List[float]: _str_to_list_of_floats,
     typing.List[Base64EncodedString]: _str_to_list_of_base64_encoded_strings,
+    typing.List[pathlib.Path]: _str_to_list_of_paths,
     # optional primitives
     typing.Optional[str]: _str_to_optional_str,
     typing.Optional[int]: _str_to_optional_int,
@@ -229,11 +256,13 @@ _DECODERS_LOOKUP_TABLE = {
     typing.Optional[bool]: _str_to_optional_bool,
     typing.Optional[UnvalidatedDict]: _str_to_optional_unvalidated_dict,
     typing.Optional[Base64EncodedString]: _str_to_optional_base64_encoded_string,
+    typing.Optional[pathlib.Path]: _str_to_optional_path,
     # optional lists of primitives
     typing.Optional[typing.List[str]]: _str_to_optional_list_of_strs,
     typing.Optional[typing.List[int]]: _str_to_optional_list_of_ints,
     typing.Optional[typing.List[float]]: _str_to_optional_list_of_floats,
     typing.Optional[typing.List[Base64EncodedString]]: _str_to_optional_list_of_base64_encoded_strings,
+    typing.Optional[typing.List[pathlib.Path]]: _str_to_optional_list_of_paths,
 }
 
 
