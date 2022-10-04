@@ -70,7 +70,7 @@ from python_sdk.config import _config_decoder
         ("", _config_decoder.Base64EncodedString, ValueError),
         (None, _config_decoder.Base64EncodedString, ValueError),
         # str_to_path
-        ("/temp", pathlib.Path, pathlib.Path("/tempt")),
+        ("/temp", pathlib.Path, pathlib.Path("/temp")),
         ("/temp/one/two", pathlib.Path, pathlib.Path("/temp/one/two")),
         # str_to_literal
         ("INFO", typing.Literal["INFO"], "INFO"),
