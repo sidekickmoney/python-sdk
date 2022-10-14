@@ -36,7 +36,7 @@ else:
     sys.exit(1)
 
 if _Config.DESTINATION == "STDOUT":
-    _handler = logging.StreamHandler(stream=sys.stdout)
+    _handler = _log.StreamHandler(stream=sys.stdout)
     _handler.setFormatter(fmt=_formatter)
 elif _Config.DESTINATION == "STDERR":
     _handler = logging.StreamHandler(stream=sys.stderr)

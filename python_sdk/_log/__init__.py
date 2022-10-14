@@ -1,3 +1,4 @@
+from ._logger import StreamHandler
 from ._logger import StructuredLogHumanReadableFormatter
 from ._logger import StructuredLogMachineReadableFormatter
 from ._logger import add_listener
