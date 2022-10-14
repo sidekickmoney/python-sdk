@@ -128,7 +128,7 @@ class StructuredLogHumanReadableFormatter(_StructuredLogPreFormatter):
         return text
 
 
-class _StreamHandler(logging.StreamHandler):
+class StreamHandler(logging.StreamHandler):
     def emit(self, record: logging.LogRecord) -> None:
         # this module is the base logging implementation, that is intended to be configured by the public "log" package
         # however, before it is actually configured, other packages may need to log i.e. the "config" package
@@ -138,7 +138,8 @@ class _StreamHandler(logging.StreamHandler):
         # during logging configuration, we will flush the logs as well
 
         if _LOGGING_CONFIGURED or _TERMINATING:
-            super().emit(record=record)
+            if _root_logger.isEnabledFor(level=record.levelno):
+                super().emit(record=record)
         else:
             _LOG_STASH.append(record)
 
@@ -282,6 +283,6 @@ _root_logger = logging.getLogger()
 # default config
 set_level(level="DEBUG")
 _pre_config_formatter = StructuredLogMachineReadableFormatter()
-_pre_config_handler = _StreamHandler(stream=sys.stdout)
+_pre_config_handler = StreamHandler(stream=sys.stdout)
 _pre_config_handler.setFormatter(fmt=_pre_config_formatter)
 set_handlers(handlers=[_pre_config_handler])
