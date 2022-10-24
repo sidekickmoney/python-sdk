@@ -280,16 +280,12 @@ def type_is_supported(data_type: typing.Type) -> bool:
 
 
 def _is_literal(data_type: typing.Type) -> bool:
-    # for a type to be considered Literal it must be a typing.Literal with all arguments
-    # being upper-cased strings
+    # for a type to be considered Literal it must be a typing.Literal with all arguments of type str
     if typing.get_origin(data_type) == typing.Literal:
         literal_options = list(typing.get_args(data_type))
         if len({type(arg) for arg in literal_options}) == 1:
             if type(literal_options[0]) == str:
-
-                literal_options_uppercased = [literal_option.upper() for literal_option in literal_options]
-                if literal_options_uppercased == literal_options:
-                    return True
+                return True
     return False
 
 
