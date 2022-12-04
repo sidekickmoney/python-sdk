@@ -1,3 +1,4 @@
+from ._logger import LOGGING_CONFIGURED
 from ._logger import StreamHandler
 from ._logger import StructuredLogHumanReadableFormatter
 from ._logger import StructuredLogMachineReadableFormatter
@@ -10,7 +11,6 @@ from ._logger import exception
 from ._logger import info
 from ._logger import set_handlers
 from ._logger import set_level
-from ._logger import set_logging_configured
 from ._logger import unbind
 from ._logger import unbind_all
 from ._logger import warning
