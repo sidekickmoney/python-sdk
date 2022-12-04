@@ -95,7 +95,7 @@ def _enforce_upper_case_conventions(cls: _ConfigProtocol) -> None:
 
 
 def _enforce_upper_case_prefix(cls: _ConfigProtocol) -> None:
-    if not cls._PREFIX or cls._PREFIX.upper() != cls._PREFIX:
+    if cls._PREFIX.upper() != cls._PREFIX:
         raise ValueError("Prefix must be uppercase to ensure consistency")
 
 
