@@ -65,9 +65,6 @@ secrets = [
     "boto3>=1.24"
 ]
 
-[project.scripts]
-python-sdk = "python_sdk._cli:main"
-
 [tool.setuptools]
 package-dir = {"" = "src"}
 
@@ -75,7 +72,7 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-skm_cli = ["py.typed", "version"]
+python_sdk = ["py.typed", "version"]
 
 [tool.setuptools.dynamic]
 version = {file = "version"}
