@@ -3,7 +3,7 @@ import subprocess
 import sys
 import typing
 
-from .__version__ import __version__
+from .version import VERSION
 
 _BLACK_BASE_PARAMETERS: typing.List[str] = ["black", ".", "--line-length", "120"]
 _ISORT_BASE_PARAMETERS: typing.List[str] = [
@@ -33,7 +33,7 @@ def main() -> int:
 
 
 def _show_version() -> int:
-    print(__version__)
+    print(VERSION)
     return 0
 
 
