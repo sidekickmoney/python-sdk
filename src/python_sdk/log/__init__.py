@@ -1,9 +1,9 @@
-from ._logger import bind
-from ._logger import critical
-from ._logger import debug
-from ._logger import error
-from ._logger import exception
-from ._logger import info
-from ._logger import unbind
-from ._logger import unbind_all
-from ._logger import warning
+from ._logger import bind as bind
+from ._logger import critical as critical
+from ._logger import debug as debug
+from ._logger import error as error
+from ._logger import exception as exception
+from ._logger import info as info
+from ._logger import unbind as unbind
+from ._logger import unbind_all as unbind_all
+from ._logger import warning as warning

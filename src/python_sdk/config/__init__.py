@@ -1,4 +1,4 @@
-from ._config import _ConfigProtocol
-from ._config import config
-from ._config_decoder import Base64EncodedString
-from ._config_decoder import UnvalidatedDict
+from ._config import _ConfigProtocol as _ConfigProtocol
+from ._config import config as config
+from ._config_decoder import Base64EncodedString as Base64EncodedString
+from ._config_decoder import UnvalidatedDict as UnvalidatedDict
