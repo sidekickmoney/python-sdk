@@ -13,15 +13,15 @@ import sys
 import traceback
 import typing
 
-_LOGGING_CONFIGURED: bool = False
-_TERMINATING: bool = False
-_LOG_STASH: typing.List[logging.LogRecord] = []
+LOGGING_CONFIGURED: bool = False
+TERMINATING: bool = False
+LOG_STASH: typing.List[logging.LogRecord] = []
 
-_HANDLERS: typing.List[logging.Handler] = []
-_LISTENERS: typing.List[logging.handlers.QueueListener] = []
+HANDLERS: typing.List[logging.Handler] = []
+LISTENERS: typing.List[logging.handlers.QueueListener] = []
 
-_DEFAULT_CONTEXT_VALUE_FACTORY = dict
-_CONTEXT = contextvars.ContextVar("_PYTHON_SDK_LOGGING_CONTEXT", default=_DEFAULT_CONTEXT_VALUE_FACTORY())
+DEFAULT_CONTEXT_VALUE_FACTORY = dict
+CONTEXT = contextvars.ContextVar("_PYTHON_SDK_LOGGING_CONTEXT", default=DEFAULT_CONTEXT_VALUE_FACTORY())
 
 
 class _StructuredLogPreFormatter:
@@ -137,16 +137,16 @@ class StreamHandler(logging.StreamHandler):
         # in the event that the program terminates before logging is configured, say, because we encountered an error
         # during logging configuration, we will flush the logs as well
 
-        if _LOGGING_CONFIGURED or _TERMINATING:
-            if _root_logger.isEnabledFor(level=record.levelno):
+        if LOGGING_CONFIGURED or TERMINATING:
+            if root_logger.isEnabledFor(level=record.levelno):
                 super().emit(record=record)
         else:
-            _LOG_STASH.append(record)
+            LOG_STASH.append(record)
 
 
 def _merge_context(**kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
     data = kwargs
-    for key, val in _CONTEXT.get().items():
+    for key, val in CONTEXT.get().items():
         data.setdefault(key, val)
     return data
 
@@ -158,11 +158,11 @@ def _log(
     _stack_level: int = 2,
     **kwargs: typing.Any,
 ) -> None:
-    if not _root_logger.isEnabledFor(level=level):
+    if not root_logger.isEnabledFor(level=level):
         return
 
     data = _merge_context(**kwargs)
-    _root_logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
+    root_logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
 
 
 def critical(message: typing.Any, **kwargs: typing.Any) -> None:
@@ -190,20 +190,20 @@ def exception(message: typing.Any, exception: typing.Optional[BaseException] = N
 
 
 def bind(**kwargs: typing.Any) -> None:
-    existing_context = _CONTEXT.get()
+    existing_context = CONTEXT.get()
     existing_context.update(kwargs)
-    _CONTEXT.set(existing_context)
+    CONTEXT.set(existing_context)
 
 
 def unbind(*args: str) -> None:
-    existing_context = _CONTEXT.get()
+    existing_context = CONTEXT.get()
     new_context = {key: val for key, val in existing_context.items() if key not in args}
-    _CONTEXT.set(new_context)
+    CONTEXT.set(new_context)
 
 
 def unbind_all() -> None:
-    default_context = _DEFAULT_CONTEXT_VALUE_FACTORY()
-    _CONTEXT.set(default_context)
+    default_context = DEFAULT_CONTEXT_VALUE_FACTORY()
+    CONTEXT.set(default_context)
 
 
 @atexit.register
@@ -215,15 +215,15 @@ def _cleanup() -> None:
 
 
 def _flush_logs() -> None:
-    debug("Flushing logs", number_of_logs=len(_LOG_STASH))
-    while _LOG_STASH:
-        record = _LOG_STASH.pop(0)
-        for handler in _HANDLERS:
+    debug("Flushing logs", number_of_logs=len(LOG_STASH))
+    while LOG_STASH:
+        record = LOG_STASH.pop(0)
+        for handler in HANDLERS:
             handler.emit(record=record)
 
 
 def _flush_and_close_handlers() -> None:
-    for handler in _root_logger.handlers:
+    for handler in root_logger.handlers:
         try:
             handler.flush()
         except ValueError:
@@ -234,7 +234,7 @@ def _flush_and_close_handlers() -> None:
 
 
 def _stop_listeners() -> None:
-    for listener in _LISTENERS:
+    for listener in LISTENERS:
         listener.stop()
 
 
@@ -244,45 +244,45 @@ def set_logging_configured() -> None:
 
 
 def _set_logging_configured_flag() -> None:
-    global _LOGGING_CONFIGURED
-    _LOGGING_CONFIGURED = True
+    global LOGGING_CONFIGURED
+    LOGGING_CONFIGURED = True
 
 
 def _set_terminating_flag() -> None:
-    global _TERMINATING
-    _TERMINATING = True
+    global TERMINATING
+    TERMINATING = True
 
 
 def _remove_existing_handlers() -> None:
-    for _existing_handler in _root_logger.handlers:
+    for _existing_handler in root_logger.handlers:
         # TODO(lijok): are we messing up pytest by closing its handlers?
         _existing_handler.flush()
         _existing_handler.close()
-        _root_logger.removeHandler(_existing_handler)
+        root_logger.removeHandler(_existing_handler)
 
 
 def set_level(level: str) -> None:
-    _root_logger.setLevel(level=level)
+    root_logger.setLevel(level=level)
 
 
 def set_handlers(handlers: typing.List[logging.Handler]) -> None:
     _remove_existing_handlers()
     for handler in handlers:
-        _root_logger.addHandler(hdlr=handler)
+        root_logger.addHandler(hdlr=handler)
 
-    global _HANDLERS
-    _HANDLERS = handlers
+    global HANDLERS
+    HANDLERS = handlers
 
 
 def add_listener(listener: logging.handlers.QueueListener) -> None:
-    _LISTENERS.append(listener)
+    LISTENERS.append(listener)
 
 
-_root_logger = logging.getLogger()
+root_logger = logging.getLogger()
 
 # default config
 set_level(level="DEBUG")
-_pre_config_formatter = StructuredLogMachineReadableFormatter()
-_pre_config_handler = StreamHandler(stream=sys.stdout)
-_pre_config_handler.setFormatter(fmt=_pre_config_formatter)
-set_handlers(handlers=[_pre_config_handler])
+pre_config_formatter = StructuredLogMachineReadableFormatter()
+pre_config_handler = StreamHandler(stream=sys.stdout)
+pre_config_handler.setFormatter(fmt=pre_config_formatter)
+set_handlers(handlers=[pre_config_handler])
