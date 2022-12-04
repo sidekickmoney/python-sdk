@@ -61,7 +61,7 @@ else:
     sys.exit(1)
 
 _log.set_handlers(handlers=[_handler])
-_log.set_logging_configured()
+_log.LOGGING_CONFIGURED.set()
 
 _log.info(
     "Logging configured",

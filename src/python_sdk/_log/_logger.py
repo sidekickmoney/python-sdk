@@ -13,8 +13,10 @@ import sys
 import traceback
 import typing
 
-LOGGING_CONFIGURED: bool = False
-TERMINATING: bool = False
+from python_sdk import utils
+
+LOGGING_CONFIGURED: utils.BoolFlag = utils.BoolFlag()
+TERMINATING: utils.BoolFlag = utils.BoolFlag()
 LOG_STASH: typing.List[logging.LogRecord] = []
 
 HANDLERS: typing.List[logging.Handler] = []
@@ -208,7 +210,7 @@ def unbind_all() -> None:
 
 @atexit.register
 def _cleanup() -> None:
-    _set_terminating_flag()
+    TERMINATING.set()
     _flush_logs()
     _flush_and_close_handlers()
     _stop_listeners()
@@ -236,21 +238,6 @@ def _flush_and_close_handlers() -> None:
 def _stop_listeners() -> None:
     for listener in LISTENERS:
         listener.stop()
-
-
-def set_logging_configured() -> None:
-    _set_logging_configured_flag()
-    _flush_logs()
-
-
-def _set_logging_configured_flag() -> None:
-    global LOGGING_CONFIGURED
-    LOGGING_CONFIGURED = True
-
-
-def _set_terminating_flag() -> None:
-    global TERMINATING
-    TERMINATING = True
 
 
 def _remove_existing_handlers() -> None:
