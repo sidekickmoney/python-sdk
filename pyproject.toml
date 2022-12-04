@@ -78,8 +78,11 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+skm_cli = ["py.typed", "version"]
+
 [tool.setuptools.dynamic]
-version = {attr = "python_sdk.__version__.__version__"}
+version = {file = "version"}
 
 [[tool.mypy.overrides]]
 module = "tests.*"
