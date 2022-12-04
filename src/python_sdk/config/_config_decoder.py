@@ -18,7 +18,7 @@ UnvalidatedDict = typing.TypeVar("UnvalidatedDict", bound=typing.Dict[typing.Any
 def _str_to_str(string: str) -> str:
     if not string:
         raise ValueError()
-    return str(string)
+    return string
 
 
 def _str_to_int(string: str) -> int:
@@ -142,71 +142,51 @@ def _str_to_optional_str(string: typing.Optional[str]) -> typing.Optional[str]:
 
 
 def _str_to_optional_int(string: typing.Optional[str]) -> typing.Optional[int]:
-    if string:
-        return _str_to_int(string=string)
-    return None
+    return _str_to_int(string=string) if string else None
 
 
 def _str_to_optional_float(string: typing.Optional[str]) -> typing.Optional[float]:
-    if string:
-        return _str_to_float(string=string)
-    return None
+    return _str_to_float(string=string) if string else None
 
 
 def _str_to_optional_bool(string: typing.Optional[str]) -> typing.Optional[bool]:
-    if string:
-        return _str_to_bool(string=string)
-    return None
+    return _str_to_bool(string=string) if string else None
 
 
 def _str_to_optional_unvalidated_dict(
     string: typing.Optional[str],
 ) -> typing.Optional[typing.Dict[typing.Any, typing.Any]]:
-    if string:
-        return _str_to_unvalidated_dict(string=string)
-    return None
+    return _str_to_unvalidated_dict(string=string) if string else None
 
 
 def _str_to_optional_base64_encoded_string(string: typing.Optional[str]) -> typing.Optional[str]:
-    if string:
-        return _str_to_base64_encoded_string(string=string)
-    return None
+    return _str_to_base64_encoded_string(string=string) if string else None
 
 
 def _str_to_optional_path(string: typing.Optional[str]) -> typing.Optional[pathlib.Path]:
-    if string:
-        return _str_to_path(string=string)
-    return None
+    return _str_to_path(string=string) if string else None
 
 
 def _str_to_optional_literal(string: typing.Optional[str], literal: typing.Type) -> typing.Optional[str]:
-    if string:
-        return _str_to_literal(string=string, literal=literal)
-    return None
+    return _str_to_literal(string=string, literal=literal) if string else None
 
 
 def _str_to_optional_list_of_strs(
     string: typing.Optional[str],
 ) -> typing.Optional[typing.List[str]]:
-    if string:
-        return _str_to_list_of_strs(string=string)
-    return None
+    return _str_to_list_of_strs(string=string) if string else None
 
 
 def _str_to_optional_list_of_ints(
     string: typing.Optional[str],
 ) -> typing.Optional[typing.List[int]]:
-    if string:
-        return _str_to_list_of_ints(string=string)
-    return None
+    return _str_to_list_of_ints(string=string) if string else None
 
 
 def _str_to_optional_list_of_floats(
     string: typing.Optional[str],
 ) -> typing.Optional[typing.List[float]]:
-    if string:
-        return _str_to_list_of_floats(string=string)
-    return None
+    return _str_to_list_of_floats(string=string) if string else None
 
 
 def _str_to_optional_list_of_base64_encoded_strings(
@@ -218,9 +198,7 @@ def _str_to_optional_list_of_base64_encoded_strings(
 
 
 def _str_to_optional_list_of_paths(string: str) -> typing.Optional[typing.List[pathlib.Path]]:
-    if string:
-        return _str_to_list_of_paths(string=string)
-    return None
+    return _str_to_list_of_paths(string=string) if string else None
 
 
 def _str_to_optional_list_of_literals(
@@ -283,9 +261,8 @@ def _is_literal(data_type: typing.Type) -> bool:
     # for a type to be considered Literal it must be a typing.Literal with all arguments of type str
     if typing.get_origin(data_type) == typing.Literal:
         literal_options = list(typing.get_args(data_type))
-        if len({type(arg) for arg in literal_options}) == 1:
-            if type(literal_options[0]) == str:
-                return True
+        if len({type(arg) for arg in literal_options}) == 1 and type(literal_options[0]) == str:
+            return True
     return False
 
 

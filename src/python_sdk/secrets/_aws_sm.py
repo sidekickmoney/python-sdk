@@ -18,7 +18,7 @@ class AWSSecretsManager:
     api_version: typing.Optional[str] = None
     use_ssl: bool = True
     verify: bool = True
-    endpoint_url: str = None
+    endpoint_url: str = ""
 
     @property
     def _client(self) -> typing.Any:
@@ -30,7 +30,7 @@ class AWSSecretsManager:
                 api_version=self.api_version,
                 use_ssl=self.use_ssl,
                 verify=self.verify,
-                endpoint_url=self.endpoint_url,
+                endpoint_url=self.endpoint_url or None,
                 aws_access_key_id=self.secret_key_id,
                 aws_secret_access_key=self.secret_access_key,
                 aws_session_token=self.session_token,
