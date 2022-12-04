@@ -39,7 +39,7 @@ class AWSSecretsManager:
         return client
 
     def get_secret(self, secret_name: str) -> str:
-        _log.info("Getting secret", secret_name=secret_name)
+        _log.debug("Getting secret", secret_name=secret_name)
         try:
             response = self._client.get_secret_value(SecretId=secret_name)
         except Exception:
