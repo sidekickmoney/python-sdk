@@ -1,9 +1,23 @@
 name: test
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
   push:
     branches:
       - main
+
+  schedule:
+    - cron: '0 8 * * 1-5' # At 08:00 on every day-of-week from Monday through Friday.
+
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash -ieo pipefail {0}
 
 jobs:
   test:
@@ -23,20 +37,20 @@ jobs:
           - "3.9"
           - "3.10"
         test-type:
-          - "unit-test"
-          - "integration-test"
-          - "property-test"
-          - "functional-test"
-          - "security-test"
-          - "smoke-test"
-          - "acceptance-test"
-          - "performance-test"
+          - "test-acceptance"
+          - "test-functional"
+          - "test-performance"
+          - "test-property"
+          - "test-security"
+          - "test-smoke"
+          - "test-unit"
 
     steps:
       - name: checkout repo
         uses: actions/checkout@v3
 
       - name: install python${{ matrix.python-version }}
+        id: install-python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -45,14 +59,10 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: python-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
+          key: python-${{ steps.install-python.outputs.python-version }}-${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
       - name: setup
-        run: make setup
-        env:
-          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: scripts/setup
 
       - name: run tests
-        run: make ${{ matrix.test-type }}
-        env:
-          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: scripts/${{ matrix.test-type }}
