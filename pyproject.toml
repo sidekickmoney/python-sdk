@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    "setuptools==63.0.0b1",  # https://discuss.python.org/t/help-testing-pep-660-support-in-setuptools/16904
-    "wheel"
+    "setuptools>=65.5.1",
+    "wheel>=0.38.4",
 ]
 build-backend = "setuptools.build_meta"
 
