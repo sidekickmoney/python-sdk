@@ -72,9 +72,11 @@ secrets = [
 [project.scripts]
 python-sdk = "python_sdk._cli:main"
 
-
 [tool.setuptools]
-zip-safe = true  # TODO(lijok): this is likely to be false soon-ish
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.dynamic]
 version = {attr = "python_sdk.__version__.__version__"}
