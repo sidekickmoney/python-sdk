@@ -47,7 +47,7 @@ def _get_config_source() -> typing.Union[_EnvironmentVariables, _LocalFile]:
         # this should never happen
         raise AssertionError(f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not implemented.")
 
-    _log.info(f"Configs will be sourced from {source_from}")
+    _log.debug(f"Configs will be sourced from {source_from}")
     return source_from
 
 

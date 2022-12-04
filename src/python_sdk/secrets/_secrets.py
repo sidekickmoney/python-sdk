@@ -30,7 +30,7 @@ def _get_secrets_engine() -> _SecretsEngine:
     if _Config.ENGINE != "AWS_SM":
         # should never happen
         raise AssertionError(f"Secrets engine {_Config.ENGINE} not supported")
-    _log.info(f"Using {_Config.ENGINE} secrets engine for fetching secrets")
+    _log.debug(f"Using {_Config.ENGINE} secrets engine for fetching secrets")
 
     from ._aws_sm import AWSSecretsManager
 

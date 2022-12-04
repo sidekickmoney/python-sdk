@@ -63,7 +63,7 @@ else:
 _log.set_handlers(handlers=[_handler])
 _log.LOGGING_CONFIGURED.set()
 
-_log.info(
+_log.debug(
     "Logging configured",
     LEVEL=_Config.LEVEL,
     OUTPUT_STYLE=_Config.OUTPUT_STYLE,
