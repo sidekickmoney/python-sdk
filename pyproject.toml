@@ -51,9 +51,6 @@ classifiers = [
 dev = [
     "black",
     "isort",
-]
-
-test = [
     "black",
     "isort",
     "hypothesis",
