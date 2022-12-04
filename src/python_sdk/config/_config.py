@@ -138,15 +138,13 @@ def _get_config_from_environment_variables(prefix: str) -> typing.Dict[str, str]
 
 def _get_config_from_local_file(prefix: str, filepath: str) -> typing.Dict[str, str]:
     try:
-        with open(filepath) as f:
-            config_document = f.read()
+        config_document = pathlib.Path(filepath).read_text()
     except FileNotFoundError:
         raise FileNotFoundError(f"File not found: {filepath}")
     except PermissionError:
         raise PermissionError(f"Encountered a permission error when trying to read file: {filepath}")
 
-    parsed_config = _parse_config_document(prefix=prefix, config_document=config_document)
-    return parsed_config
+    return _parse_config_document(prefix=prefix, config_document=config_document)
 
 
 def _parse_config_document(prefix: str, config_document: str) -> typing.Dict[str, str]:
@@ -202,10 +200,9 @@ def _apply_config_to_config_class(cls: _ConfigProtocol, config: typing.Dict[str,
 
         if config_value is not unset:
             setattr(cls, config_option, config_value)
-        elif config_value is unset:
-            if default is not unset:
-                setattr(cls, config_option, default)  # redundant, but more readable
-            elif config_option_is_optional:
-                setattr(cls, config_option, None)
-            else:
-                raise ValueError(f"Required config option {cls._PREFIX}{config_option} with no default was not set")
+        elif default is not unset:
+            setattr(cls, config_option, default)  # redundant, but more readable
+        elif config_option_is_optional:
+            setattr(cls, config_option, None)
+        else:
+            raise ValueError(f"Required config option {cls._PREFIX}{config_option} with no default was not set")

@@ -3,6 +3,7 @@ Base implementation of structured logging api's.
 """
 
 import atexit
+import contextlib
 import contextvars
 import datetime
 import io
@@ -73,11 +74,10 @@ class _StructuredLogPreFormatter:
         if self.include_thread_name:
             data["thread_name"] = record.threadName
 
-        if record.exc_info:
+        if record.exc_info and not record.exc_text:
             # Cache the traceback text to avoid converting it multiple times
             # (it's constant anyway)
-            if not record.exc_text:
-                record.exc_text = self.format_exception(record.exc_info)
+            record.exc_text = self.format_exception(record.exc_info)
         if record.exc_text:
             data["exception"] = record.exc_text
         if record.stack_info:
@@ -226,12 +226,10 @@ def _flush_logs() -> None:
 
 def _flush_and_close_handlers() -> None:
     for handler in root_logger.handlers:
-        try:
-            handler.flush()
-        except ValueError:
+        with contextlib.suppress(ValueError):
             # handler might be closed already
             # this is only a problem when running pytest as it redirects stdout
-            pass
+            handler.flush()
         handler.close()
 
 
