@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source .venv/bin/activate
+
+VERSION=$(cat version)
+
+rm -rf dist
+mkdir -p built
+
+cp version src/python_sdk
+python -m build --sdist --outdir built
+mv "built/python-sdk-${VERSION}.tar.gz" "built/python-sdk.tar.gz"
+rm src/python_sdk/version

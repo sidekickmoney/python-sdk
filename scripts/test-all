@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+scripts/test-acceptance
+scripts/test-functional
+scripts/test-performance
+scripts/test-property
+scripts/test-security
+scripts/test-smoke
+scripts/test-unit
