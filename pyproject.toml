@@ -84,6 +84,10 @@ skm_cli = ["py.typed", "version"]
 [tool.setuptools.dynamic]
 version = {file = "version"}
 
+[tool.mypy]
+strict = true
+warn_unreachable = true
+
 [[tool.mypy.overrides]]
 module = "tests.*"
 ignore_errors = true
