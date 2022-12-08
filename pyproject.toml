@@ -49,6 +49,8 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
+    "build>=0.8.0",
+    "twine>=4.0.1",
     "black>=22.10.0",
     "isort>=5.10.1",
     "hypothesis>=6.54.0",
