@@ -30,10 +30,6 @@ if _Config.OUTPUT_STYLE == "HUMAN_READABLE":
     _formatter = _log.StructuredLogHumanReadableFormatter()
 elif _Config.OUTPUT_STYLE == "MACHINE_READABLE":
     _formatter = _log.StructuredLogMachineReadableFormatter()
-else:
-    # this should never happen
-    _log.critical(f"Log output style {_Config.OUTPUT_STYLE} not implemented")
-    sys.exit(1)
 
 if _Config.DESTINATION == "STDOUT":
     _handler = _log.StreamHandler(stream=sys.stdout)
@@ -55,10 +51,6 @@ elif _Config.DESTINATION == "ROTATING_FILE":
     _queue_listener = handlers.QueueListener(_queue, _rotating_file_handler, respect_handler_level=True)
     _log.add_listener(listener=_queue_listener)
     _queue_listener.start()
-else:
-    # this should never happen
-    _log.critical(f"Log destination {_Config.DESTINATION} not implemented")
-    sys.exit(1)
 
 _log.set_handlers(handlers=[_handler])
 _log.LOGGING_CONFIGURED.set()
