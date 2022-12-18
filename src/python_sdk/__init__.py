@@ -1,1 +1,1 @@
-from .version import VERSION
+from python_sdk.version import VERSION
