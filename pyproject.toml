@@ -44,7 +44,7 @@ classifiers = [
 "Homepage" = "https://github.com/lijok/python-sdk"
 "Source Code" = "https://github.com/lijok/python-sdk"
 "Documentation" = "https://github.com/lijok/python-sdk/docs"
-"Changelog" = "https://github.com/lijok/python-sdk/blob/master/CHANGELOG.md"
+"Changelog" = "https://github.com/lijok/python-sdk/blob/main/CHANGELOG.md"
 "Bug Tracker" = "https://github.com/lijok/python-sdk/issues"
 
 [project.optional-dependencies]
