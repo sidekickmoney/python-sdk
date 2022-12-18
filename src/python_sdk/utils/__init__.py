@@ -1,3 +1,4 @@
+from python_sdk.utils._checksum import get_file_sha1 as get_file_sha1
 from python_sdk.utils._connectivity import is_connected as is_connected
 from python_sdk.utils._file_watcher import FileStats as FileStats
 from python_sdk.utils._file_watcher import file_watcher as file_watcher
