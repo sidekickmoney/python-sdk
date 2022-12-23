@@ -73,7 +73,7 @@ def _str_to_path(string: str) -> pathlib.Path:
     return pathlib.Path(string)
 
 
-def _str_to_literal(string: str, literal: typing.Type) -> str:
+def _str_to_literal(string: str, literal: type) -> str:
     if string.strip() != string:
         raise ValueError("Leading or trailing whitespace detected")
     if string not in typing.get_args(literal):
@@ -123,7 +123,7 @@ def _str_to_list_of_paths(string: str) -> typing.List[pathlib.Path]:
     return [pathlib.Path(path) for path in string.split(_ENCODED_LIST_SEPARATOR)]
 
 
-def _str_to_list_of_literals(string: str, literal: typing.Type) -> typing.List[str]:
+def _str_to_list_of_literals(string: str, literal: type) -> typing.List[str]:
     if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
@@ -167,7 +167,7 @@ def _str_to_optional_path(string: typing.Optional[str]) -> typing.Optional[pathl
     return _str_to_path(string=string) if string else None
 
 
-def _str_to_optional_literal(string: typing.Optional[str], literal: typing.Type) -> typing.Optional[str]:
+def _str_to_optional_literal(string: typing.Optional[str], literal: type) -> typing.Optional[str]:
     return _str_to_literal(string=string, literal=literal) if string else None
 
 
@@ -201,9 +201,7 @@ def _str_to_optional_list_of_paths(string: str) -> typing.Optional[typing.List[p
     return _str_to_list_of_paths(string=string) if string else None
 
 
-def _str_to_optional_list_of_literals(
-    string: typing.Optional[str], literal: typing.Type
-) -> typing.Optional[typing.List[str]]:
+def _str_to_optional_list_of_literals(string: typing.Optional[str], literal: type) -> typing.Optional[typing.List[str]]:
     if string:
         return _str_to_list_of_literals(string=string, literal=literal)
     return None
@@ -244,7 +242,7 @@ _DECODERS_LOOKUP_TABLE = {
 }
 
 
-def type_is_supported(data_type: typing.Type) -> bool:
+def type_is_supported(data_type: type) -> bool:
     if data_type in _DECODERS_LOOKUP_TABLE:
         return True
     if (
@@ -257,7 +255,7 @@ def type_is_supported(data_type: typing.Type) -> bool:
     return False
 
 
-def _is_literal(data_type: typing.Type) -> bool:
+def _is_literal(data_type: type) -> bool:
     # for a type to be considered Literal it must be a typing.Literal with all arguments of type str
     if typing.get_origin(data_type) == typing.Literal:
         literal_options = list(typing.get_args(data_type))
@@ -266,21 +264,21 @@ def _is_literal(data_type: typing.Type) -> bool:
     return False
 
 
-def _is_optional_literal(data_type: typing.Type) -> bool:
+def _is_optional_literal(data_type: type) -> bool:
     return typing.get_origin(data_type) == typing.Union and _is_literal(data_type=typing.get_args(data_type)[0])
 
 
-def _is_list_of_literals(data_type: typing.Type) -> bool:
+def _is_list_of_literals(data_type: type) -> bool:
     return typing.get_origin(data_type) == list and _is_literal(data_type=typing.get_args(data_type)[0])
 
 
-def _is_optional_list_of_literals(data_type: typing.Type) -> bool:
+def _is_optional_list_of_literals(data_type: type) -> bool:
     return typing.get_origin(data_type) == typing.Union and _is_list_of_literals(
         data_type=typing.get_args(data_type)[0]
     )
 
 
-def _decode_str(string: str, data_type: typing.Type) -> typing.Any:
+def _decode_str(string: str, data_type: type) -> typing.Any:
     if _is_literal(data_type=data_type):
         return _str_to_literal(string=string, literal=data_type)
     elif _is_optional_literal(data_type=data_type):
@@ -297,7 +295,7 @@ def _decode_str(string: str, data_type: typing.Type) -> typing.Any:
         return decoder(string=string)
 
 
-def decode_config_value(maybe_string: typing.Optional[str], data_type: typing.Type) -> typing.Any:
+def decode_config_value(maybe_string: typing.Optional[str], data_type: type) -> typing.Any:
     if not type_is_supported(data_type=data_type):
         raise TypeError(f"Type {data_type} is not supported")
     if maybe_string is None and not _optional._is_optional_type(data_type=data_type):

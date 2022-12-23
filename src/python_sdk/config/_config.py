@@ -24,14 +24,14 @@ class _LocalFile:
 
 # TODO: aws-parameter-store document
 # TODO: aws-secrets-manager-store document
-_SOURCE_FROM_OPTIONS = ["ENVIRONMENT_VARIABLES", "LOCAL_FILE"]
+SOURCE_FROM_OPTIONS = typing.Literal["ENVIRONMENT_VARIABLES", "LOCAL_FILE"]
 
 
 def _get_config_source() -> typing.Union[_EnvironmentVariables, _LocalFile]:
     source_from = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM", "ENVIRONMENT_VARIABLES")
-    if source_from not in _SOURCE_FROM_OPTIONS:
+    if source_from not in typing.get_args(SOURCE_FROM_OPTIONS):
         raise NotImplementedError(
-            f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not supported. Available options: {_SOURCE_FROM_OPTIONS}"
+            f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not supported. Available options: {typing.get_args(SOURCE_FROM_OPTIONS)}"
         )
 
     source_from_local_file_filepath = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH")
@@ -61,7 +61,7 @@ class _ConfigClassMeta:
     """Container for config class metadata."""
 
     prefix: str
-    source_from: _SOURCE_FROM_OPTIONS
+    source_from: typing.Union[_EnvironmentVariables, _LocalFile]
 
 
 def config(*, prefix: str) -> typing.Callable[[_T], _T]:

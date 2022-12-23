@@ -24,7 +24,9 @@ HANDLERS: typing.List[logging.Handler] = []
 LISTENERS: typing.List[logging.handlers.QueueListener] = []
 
 DEFAULT_CONTEXT_VALUE_FACTORY = dict
-CONTEXT = contextvars.ContextVar("_PYTHON_SDK_LOGGING_CONTEXT", default=DEFAULT_CONTEXT_VALUE_FACTORY())
+CONTEXT: contextvars.ContextVar = contextvars.ContextVar(
+    "_PYTHON_SDK_LOGGING_CONTEXT", default=DEFAULT_CONTEXT_VALUE_FACTORY()
+)
 
 
 class _StructuredLogPreFormatter:
