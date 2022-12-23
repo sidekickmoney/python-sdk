@@ -42,8 +42,8 @@ class AWSSecretsManager:
         _log.debug("Getting secret", secret_name=secret_name)
         try:
             response = self._client.get_secret_value(SecretId=secret_name)
-        except Exception:
-            raise _exceptions.SecretDoesNotExist()  # TODO
+        except Exception as e:
+            raise _exceptions.SecretDoesNotExist() from e  # TODO
         if response["SecretString"]:
             try:
                 secret = json.loads(response["SecretString"])
