@@ -19,7 +19,7 @@ class _EnvironmentVariables:
 
 @dataclasses.dataclass(frozen=True)
 class _LocalFile:
-    filepath: typing.Union[str, pathlib.Path]
+    filepath: pathlib.Path
 
 
 # TODO: aws-parameter-store document
@@ -34,23 +34,21 @@ def _get_config_source() -> typing.Union[_EnvironmentVariables, _LocalFile]:
             f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not supported. Available options: {typing.get_args(SOURCE_FROM_OPTIONS)}"
         )
 
-    source_from_local_file_filepath = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH")
+    source_from_local_file_filepath = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH", "")
     if source_from == "LOCAL_FILE" and not source_from_local_file_filepath:
         raise ValueError(
             "PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH is required when CONFIG_SOURCE_FROM is set to "
             "LOCAL_FILE"
         )
 
+    _log.debug(f"Configs will be sourced from {source_from}")
     if source_from == "ENVIRONMENT_VARIABLES":
-        source_from = _EnvironmentVariables()
+        return _EnvironmentVariables()
     elif source_from == "LOCAL_FILE":
-        source_from = _LocalFile(filepath=source_from_local_file_filepath)
+        return _LocalFile(filepath=pathlib.Path(source_from_local_file_filepath))
     else:
         # this should never happen
         raise AssertionError(f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not implemented.")
-
-    _log.debug(f"Configs will be sourced from {source_from}")
-    return source_from
 
 
 _ConfigClass = typing.TypeVar("_ConfigClass")
@@ -131,9 +129,9 @@ def _get_config_from_environment_variables(prefix: str) -> typing.Dict[str, str]
     return {key: value for key, value in os.environ.items() if key.startswith(prefix)}
 
 
-def _get_config_from_local_file(prefix: str, filepath: str) -> typing.Dict[str, str]:
+def _get_config_from_local_file(prefix: str, filepath: pathlib.Path) -> typing.Dict[str, str]:
     try:
-        config_document = pathlib.Path(filepath).read_text()
+        config_document = filepath.read_text()
     except FileNotFoundError as e:
         raise FileNotFoundError(f"File not found: {filepath}") from e
     except PermissionError as e:
