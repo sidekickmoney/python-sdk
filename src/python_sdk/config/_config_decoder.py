@@ -137,8 +137,7 @@ def _str_to_list_of_literals(string: str, literal: type) -> typing.List[str]:
 
 
 def _str_to_optional_str(string: typing.Optional[str]) -> typing.Optional[str]:
-    if string:
-        return string
+    return string or None
 
 
 def _str_to_optional_int(string: typing.Optional[str]) -> typing.Optional[int]:
