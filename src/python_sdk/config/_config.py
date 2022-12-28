@@ -53,7 +53,7 @@ def _get_config_source() -> typing.Union[_EnvironmentVariables, _LocalFile]:
     return source_from
 
 
-_T = typing.TypeVar("_T")
+_ConfigClass = typing.TypeVar("_ConfigClass")
 
 
 @dataclasses.dataclass
@@ -64,16 +64,16 @@ class _ConfigClassMeta:
     source_from: typing.Union[_EnvironmentVariables, _LocalFile]
 
 
-def config(*, prefix: str) -> typing.Callable[[_T], _T]:
-    def _wrap(cls: _T) -> _T:
+def config(*, prefix: str) -> typing.Callable[[_ConfigClass], _ConfigClass]:
+    def _wrap(cls: _ConfigClass) -> _ConfigClass:
         return _process_config_class(cls=cls, prefix=prefix)
 
     return _wrap
 
 
-def _process_config_class(cls: _T, prefix: str) -> _T:
+def _process_config_class(cls: _ConfigClass, prefix: str) -> _ConfigClass:
     try:
-        cls._meta = _ConfigClassMeta(prefix=prefix, source_from=_get_config_source())
+        setattr(cls, "_meta", _ConfigClassMeta(prefix=prefix, source_from=_get_config_source()))
 
         _enforce_upper_case_prefix(cls=cls)
         _enforce_upper_case_config_options(cls=cls)
@@ -86,18 +86,19 @@ def _process_config_class(cls: _T, prefix: str) -> _T:
     return cls
 
 
-def _enforce_upper_case_prefix(cls: _T) -> None:
-    if cls._meta.prefix.upper() != cls._meta.prefix:
+def _enforce_upper_case_prefix(cls: _ConfigClass) -> None:
+    meta: _ConfigClassMeta = getattr(cls, "_meta")
+    if meta.prefix.upper() != meta.prefix:
         raise ValueError("Prefix must be uppercase to ensure consistency")
 
 
-def _enforce_upper_case_config_options(cls: _T) -> None:
+def _enforce_upper_case_config_options(cls: _ConfigClass) -> None:
     for key in cls.__annotations__.keys():
         if key.upper() != key:
             raise ValueError("All config options must be uppercase to ensure consistency")
 
 
-def _enforce_config_options_types(cls: _T) -> None:
+def _enforce_config_options_types(cls: _ConfigClass) -> None:
     for config_option, data_type in cls.__annotations__.items():
         try:
             type_is_supported = _config_decoder.type_is_supported(data_type=data_type)
@@ -107,21 +108,23 @@ def _enforce_config_options_types(cls: _T) -> None:
             raise TypeError(f"Config option {config_option} type {data_type} not supported")
 
 
-def _load_config(cls: _T) -> _T:
+def _load_config(cls: _ConfigClass) -> _ConfigClass:
     unprocessed_config = _get_config(cls=cls)
     processed_config = _process_config(cls=cls, unprocessed_config=unprocessed_config)
     _apply_config_to_config_class(cls=cls, config=processed_config)
     return cls
 
 
-def _get_config(cls: _T) -> typing.Dict[str, str]:
-    if isinstance(cls._meta.source_from, _EnvironmentVariables):
-        return _get_config_from_environment_variables(prefix=cls._meta.prefix)
-    elif isinstance(cls._meta.source_from, _LocalFile):
-        return _get_config_from_local_file(prefix=cls._meta.prefix, filepath=cls._meta.source_from.filepath)
+def _get_config(cls: _ConfigClass) -> typing.Dict[str, str]:
+    meta: _ConfigClassMeta = getattr(cls, "_meta")
+
+    if isinstance(meta.source_from, _EnvironmentVariables):
+        return _get_config_from_environment_variables(prefix=meta.prefix)
+    elif isinstance(meta.source_from, _LocalFile):
+        return _get_config_from_local_file(prefix=meta.prefix, filepath=meta.source_from.filepath)
     else:
         # this should never happen
-        raise AssertionError(f"Loading config from: {cls._meta.source_from} is not supported.")
+        raise AssertionError(f"Loading config from: {meta.source_from} is not supported.")
 
 
 def _get_config_from_environment_variables(prefix: str) -> typing.Dict[str, str]:
@@ -149,10 +152,12 @@ def _parse_config_document(prefix: str, config_document: str) -> typing.Dict[str
     return config
 
 
-def _process_config(cls: _T, unprocessed_config: typing.Dict[str, str]) -> typing.Dict[str, typing.Any]:
+def _process_config(cls: _ConfigClass, unprocessed_config: typing.Dict[str, str]) -> typing.Dict[str, typing.Any]:
+    meta: _ConfigClassMeta = getattr(cls, "_meta")
+
     processed_config = {}
     for key, unprocessed_value in unprocessed_config.items():
-        config_option = key.split(cls._meta.prefix, 1)[1]
+        config_option = key.split(meta.prefix, 1)[1]
         if not config_option:
             _log.warning(f"Found empty config option key: {key}")
             continue
@@ -168,7 +173,9 @@ def _process_config(cls: _T, unprocessed_config: typing.Dict[str, str]) -> typin
     return processed_config
 
 
-def _process_config_value(cls: _T, config_option: str, unprocessed_value: str) -> typing.Any:
+def _process_config_value(cls: _ConfigClass, config_option: str, unprocessed_value: str) -> typing.Any:
+    meta: _ConfigClassMeta = getattr(cls, "_meta")
+
     config_option_data_type = cls.__annotations__[config_option]
     try:
         processed_value = _config_decoder.decode_config_value(
@@ -176,14 +183,16 @@ def _process_config_value(cls: _T, config_option: str, unprocessed_value: str) -
         )
     except ValueError as e:
         raise ValueError(
-            f"Could not cast config option {cls._meta.prefix}{config_option} with value {unprocessed_value} to datatype "
+            f"Could not cast config option {meta.prefix}{config_option} with value {unprocessed_value} to datatype "
             f"{config_option_data_type}",
         ) from e
 
     return processed_value
 
 
-def _apply_config_to_config_class(cls: _T, config: typing.Dict[str, str]) -> None:
+def _apply_config_to_config_class(cls: _ConfigClass, config: typing.Dict[str, str]) -> None:
+    meta: _ConfigClassMeta = getattr(cls, "_meta")
+
     unset = object()
     for config_option, data_type in cls.__annotations__.items():
         default = getattr(cls, config_option, unset)
@@ -197,4 +206,4 @@ def _apply_config_to_config_class(cls: _T, config: typing.Dict[str, str]) -> Non
         elif config_option_is_optional:
             setattr(cls, config_option, None)
         else:
-            raise ValueError(f"Required config option {cls._meta.prefix}{config_option} with no default was not set")
+            raise ValueError(f"Required config option {meta.prefix}{config_option} with no default was not set")
