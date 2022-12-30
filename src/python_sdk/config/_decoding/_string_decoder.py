@@ -7,12 +7,8 @@ import json
 import pathlib
 import typing
 
-from . import _optional
-
-_ENCODED_LIST_SEPARATOR = ","
-
-Base64EncodedString = typing.TypeVar("Base64EncodedString", bound=str)
-UnvalidatedDict = typing.TypeVar("UnvalidatedDict", bound=typing.Dict[typing.Any, typing.Any])
+from python_sdk.config._decoding import _const
+from python_sdk.config._decoding import _custom_types
 
 
 def _str_to_str(string: str) -> str:
@@ -82,35 +78,35 @@ def _str_to_literal(string: str, literal: type) -> str:
 
 
 def _str_to_list_of_strs(string: str) -> typing.List[str]:
-    if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
+    if string.strip().strip(_const.ENCODED_STRING_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
         raise ValueError()
-    return string.split(_ENCODED_LIST_SEPARATOR)
+    return string.split(_const.ENCODED_STRING_LIST_SEPARATOR)
 
 
 def _str_to_list_of_ints(string: str) -> typing.List[int]:
-    if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
+    if string.strip().strip(_const.ENCODED_STRING_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
         raise ValueError()
-    return [int(i) for i in string.split(_ENCODED_LIST_SEPARATOR)]
+    return [int(i) for i in string.split(_const.ENCODED_STRING_LIST_SEPARATOR)]
 
 
 def _str_to_list_of_floats(string: str) -> typing.List[float]:
-    if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
+    if string.strip().strip(_const.ENCODED_STRING_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
         raise ValueError()
-    return [float(i) for i in string.split(_ENCODED_LIST_SEPARATOR)]
+    return [float(i) for i in string.split(_const.ENCODED_STRING_LIST_SEPARATOR)]
 
 
 def _str_to_list_of_base64_encoded_strings(string: str) -> typing.List[str]:
-    if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
+    if string.strip().strip(_const.ENCODED_STRING_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
         raise ValueError()
-    maybe_base64_encoded_strings = string.split(_ENCODED_LIST_SEPARATOR)
+    maybe_base64_encoded_strings = string.split(_const.ENCODED_STRING_LIST_SEPARATOR)
     for i in maybe_base64_encoded_strings:
         # check they can be decoded
         base64.b64decode(i, validate=True).decode("utf-8")
@@ -120,15 +116,15 @@ def _str_to_list_of_base64_encoded_strings(string: str) -> typing.List[str]:
 def _str_to_list_of_paths(string: str) -> typing.List[pathlib.Path]:
     if not string:
         raise ValueError()
-    return [pathlib.Path(path) for path in string.split(_ENCODED_LIST_SEPARATOR)]
+    return [pathlib.Path(path) for path in string.split(_const.ENCODED_STRING_LIST_SEPARATOR)]
 
 
 def _str_to_list_of_literals(string: str, literal: type) -> typing.List[str]:
-    if string.strip().strip(_ENCODED_LIST_SEPARATOR) != string:
+    if string.strip().strip(_const.ENCODED_STRING_LIST_SEPARATOR) != string:
         raise ValueError("Leading or trailing whitespace or comma detected")
     if not string:
         raise ValueError()
-    strings = string.split(_ENCODED_LIST_SEPARATOR)
+    strings = string.split(_const.ENCODED_STRING_LIST_SEPARATOR)
     literal_options = typing.get_args(literal)
     for string in strings:
         if string not in literal_options:
@@ -215,28 +211,28 @@ _DECODERS_LOOKUP_TABLE = {
     int: _str_to_int,
     float: _str_to_float,
     bool: _str_to_bool,
-    UnvalidatedDict: _str_to_unvalidated_dict,
-    Base64EncodedString: _str_to_base64_encoded_string,
+    _custom_types.UnvalidatedDict: _str_to_unvalidated_dict,
+    _custom_types.Base64EncodedString: _str_to_base64_encoded_string,
     pathlib.Path: _str_to_path,
     # lists of primitives
     typing.List[str]: _str_to_list_of_strs,
     typing.List[int]: _str_to_list_of_ints,
     typing.List[float]: _str_to_list_of_floats,
-    typing.List[Base64EncodedString]: _str_to_list_of_base64_encoded_strings,
+    typing.List[_custom_types.Base64EncodedString]: _str_to_list_of_base64_encoded_strings,
     typing.List[pathlib.Path]: _str_to_list_of_paths,
     # optional primitives
     typing.Optional[str]: _str_to_optional_str,
     typing.Optional[int]: _str_to_optional_int,
     typing.Optional[float]: _str_to_optional_float,
     typing.Optional[bool]: _str_to_optional_bool,
-    typing.Optional[UnvalidatedDict]: _str_to_optional_unvalidated_dict,
-    typing.Optional[Base64EncodedString]: _str_to_optional_base64_encoded_string,
+    typing.Optional[_custom_types.UnvalidatedDict]: _str_to_optional_unvalidated_dict,
+    typing.Optional[_custom_types.Base64EncodedString]: _str_to_optional_base64_encoded_string,
     typing.Optional[pathlib.Path]: _str_to_optional_path,
     # optional lists of primitives
     typing.Optional[typing.List[str]]: _str_to_optional_list_of_strs,
     typing.Optional[typing.List[int]]: _str_to_optional_list_of_ints,
     typing.Optional[typing.List[float]]: _str_to_optional_list_of_floats,
-    typing.Optional[typing.List[Base64EncodedString]]: _str_to_optional_list_of_base64_encoded_strings,
+    typing.Optional[typing.List[_custom_types.Base64EncodedString]]: _str_to_optional_list_of_base64_encoded_strings,
     typing.Optional[typing.List[pathlib.Path]]: _str_to_optional_list_of_paths,
 }
 
@@ -297,7 +293,7 @@ def _decode_str(string: str, data_type: type) -> typing.Any:
 def decode_config_value(maybe_string: typing.Optional[str], data_type: type) -> typing.Any:
     if not type_is_supported(data_type=data_type):
         raise TypeError(f"Type {data_type} is not supported")
-    if maybe_string is None and not _optional._is_optional_type(data_type=data_type):
+    if maybe_string is None and not _custom_types.is_optional_type(data_type=data_type):
         # got None for a non-optional type
         raise ValueError()
     string = typing.cast(str, maybe_string)  # TODO(lijok): fix this hack
