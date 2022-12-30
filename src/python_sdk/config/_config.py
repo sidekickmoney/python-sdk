@@ -4,9 +4,7 @@ import pathlib
 import typing
 
 from python_sdk import _log
-
-from . import _config_decoder
-from . import _optional
+from python_sdk.config import _decoding
 
 _CONFIG_DOCUMENT_FILE_LINE_SEPARATOR = "\n"
 _CONFIG_DOCUMENT_KEY_VALUE_SEPARATOR = "="
@@ -99,7 +97,7 @@ def _enforce_upper_case_config_options(cls: _ConfigClass) -> None:
 def _enforce_config_options_types(cls: _ConfigClass) -> None:
     for config_option, data_type in cls.__annotations__.items():
         try:
-            type_is_supported = _config_decoder.type_is_supported(data_type=data_type)
+            type_is_supported = _decoding.type_is_supported(data_type=data_type)
         except Exception:
             type_is_supported = False
         if not type_is_supported:
@@ -176,7 +174,7 @@ def _process_config_value(cls: _ConfigClass, config_option: str, unprocessed_val
 
     config_option_data_type = cls.__annotations__[config_option]
     try:
-        processed_value = _config_decoder.decode_config_value(
+        processed_value = _decoding.decode_config_value(
             maybe_string=unprocessed_value, data_type=config_option_data_type
         )
     except ValueError as e:
@@ -194,7 +192,7 @@ def _apply_config_to_config_class(cls: _ConfigClass, config: typing.Dict[str, st
     unset = object()
     for config_option, data_type in cls.__annotations__.items():
         default = getattr(cls, config_option, unset)
-        config_option_is_optional = _optional._is_optional_type(data_type=data_type)
+        config_option_is_optional = _decoding.is_optional_type(data_type=data_type)
         config_value = config.get(config_option, unset)
 
         if config_value is not unset:
