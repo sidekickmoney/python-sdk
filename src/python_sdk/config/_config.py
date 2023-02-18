@@ -1,205 +1,278 @@
 import dataclasses
-import os
+import datetime
 import pathlib
 import typing
 
 from python_sdk import _log
-from python_sdk.config import _decoding
+from python_sdk import sentinel
+from python_sdk import version
+from python_sdk.config import _config_option
+from python_sdk.config import _config_sources
+from python_sdk.config import _config_value_types
+from python_sdk.config import _config_value_validators
 
-_CONFIG_DOCUMENT_FILE_LINE_SEPARATOR = "\n"
-_CONFIG_DOCUMENT_KEY_VALUE_SEPARATOR = "="
+if typing.TYPE_CHECKING:
+    from python_sdk.config import _config_validators
 
-
-@dataclasses.dataclass(frozen=True)
-class _EnvironmentVariables:
-    pass
-
-
-@dataclasses.dataclass(frozen=True)
-class _LocalFile:
-    filepath: pathlib.Path
+Unset: sentinel.Sentinel = sentinel.Sentinel("Unset")
 
 
-# TODO: aws-parameter-store document
-# TODO: aws-secrets-manager-store document
-SOURCE_FROM_OPTIONS = typing.Literal["ENVIRONMENT_VARIABLES", "LOCAL_FILE"]
+# TODO: get_documentation function at module level which pulls out docs from all configuration objects
+# TODO: registry of tuples of all Config classes and all of their config options, so we can fetch documentation for it
+# and also append to it manually options which are only available through plain environment variables, e.g., in this
+# module
 
 
-def _get_config_source() -> typing.Union[_EnvironmentVariables, _LocalFile]:
-    source_from = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM", "ENVIRONMENT_VARIABLES")
-    if source_from not in typing.get_args(SOURCE_FROM_OPTIONS):
-        raise NotImplementedError(
-            f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not supported. Available options: {typing.get_args(SOURCE_FROM_OPTIONS)}"
-        )
+class _ConfigMetaclass(type):
+    def __str__(cls) -> str:
+        # TODO
+        return super().__str__()
 
-    source_from_local_file_filepath = os.environ.get("PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH", "")
-    if source_from == "LOCAL_FILE" and not source_from_local_file_filepath:
-        raise ValueError(
-            "PYTHON_SDK_CONFIG_SOURCE_FROM_LOCAL_FILE_FILEPATH is required when CONFIG_SOURCE_FROM is set to "
-            "LOCAL_FILE"
-        )
+    def __repr__(cls) -> str:
+        # TODO
+        return super().__repr__()
 
-    _log.debug(f"Configs will be sourced from {source_from}")
-    if source_from == "ENVIRONMENT_VARIABLES":
-        return _EnvironmentVariables()
-    elif source_from == "LOCAL_FILE":
-        return _LocalFile(filepath=pathlib.Path(source_from_local_file_filepath))
-    else:
-        # this should never happen
-        raise AssertionError(f"PYTHON_SDK_CONFIG_SOURCE_FROM {source_from} not implemented.")
+    def __getattribute__(cls, item: str) -> typing.Any:
+        attribute = super().__getattribute__(item)
+        if not isinstance(attribute, _config_option.ConfigOption):
+            return attribute
 
+        if cls.meta.lazy_load_config and not cls.meta.loaded:
+            cls._load_config()
+            attribute = super().__getattribute__(item)
 
-_ConfigClass = typing.TypeVar("_ConfigClass")
+        return attribute.value
 
 
 @dataclasses.dataclass
-class _ConfigClassMeta:
-    """Container for config class metadata."""
+class _ConfigMeta:
+    name: str
+    description: str
+    option_prefix: str
+    config_sources: typing.List["_config_sources.ConfigSource"]
+    lazy_load_config: bool
+    validators: typing.List["_config_validators.ConfigValidator"]
+    last_loaded_at: typing.Optional[datetime.datetime] = None
+    _loaded: bool = False
 
-    prefix: str
-    source_from: typing.Union[_EnvironmentVariables, _LocalFile]
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        option_prefix: str,
+        config_sources: typing.List["_config_sources.ConfigSource"],
+        lazy_load_config: bool,
+        validators: typing.List["_config_validators.ConfigValidator"],
+    ):
+        self.name = name
+        self.description = description
+        self.option_prefix = option_prefix
+        self.config_sources = config_sources
+        self.lazy_load_config = lazy_load_config
+        self.validators = validators
+        self.last_loaded_at = None
+        self._loaded = False
 
+    @property
+    def loaded(self) -> bool:
+        return self._loaded
 
-def config(*, prefix: str) -> typing.Callable[[_ConfigClass], _ConfigClass]:
-    def _wrap(cls: _ConfigClass) -> _ConfigClass:
-        return _process_config_class(cls=cls, prefix=prefix)
-
-    return _wrap
-
-
-def _process_config_class(cls: _ConfigClass, prefix: str) -> _ConfigClass:
-    try:
-        setattr(cls, "_meta", _ConfigClassMeta(prefix=prefix, source_from=_get_config_source()))
-
-        _enforce_upper_case_prefix(cls=cls)
-        _enforce_upper_case_config_options(cls=cls)
-        _enforce_config_options_types(cls=cls)
-        _load_config(cls=cls)
-    except Exception as e:
-        _log.exception(e)
-        raise
-
-    return cls
-
-
-def _enforce_upper_case_prefix(cls: _ConfigClass) -> None:
-    meta: _ConfigClassMeta = getattr(cls, "_meta")
-    if meta.prefix.upper() != meta.prefix:
-        raise ValueError("Prefix must be uppercase to ensure consistency")
-
-
-def _enforce_upper_case_config_options(cls: _ConfigClass) -> None:
-    for key in cls.__annotations__.keys():
-        if key.upper() != key:
-            raise ValueError("All config options must be uppercase to ensure consistency")
+    @loaded.setter
+    def loaded(self, value: bool) -> None:
+        self.last_loaded_at = datetime.datetime.now(tz=datetime.timezone.utc)
+        self._loaded = value
 
 
-def _enforce_config_options_types(cls: _ConfigClass) -> None:
-    for config_option, data_type in cls.__annotations__.items():
-        try:
-            type_is_supported = _decoding.type_is_supported(data_type=data_type)
-        except Exception:
-            type_is_supported = False
-        if not type_is_supported:
-            raise TypeError(f"Config option {config_option} type {data_type} not supported")
+class Config(metaclass=_ConfigMetaclass):
+    meta: _ConfigMeta
 
+    # TODO: config cache
+    # TODO: how do we allow ops to configure some of these options?
+    # TODO?: remove `config` prefixes and suffixes
+    def __init_subclass__(
+        cls,
+        name: str = "Application Configuration",
+        description: str = "",
+        option_prefix: str = "",
+        config_sources: typing.List["_config_sources.ConfigSource"] = None,
+        lazy_load_config: bool = False,
+        validators: typing.Optional[typing.List["_config_validators.ConfigValidator"]] = None,  # TODO: this or function
+    ) -> None:
+        super().__init_subclass__()
 
-def _load_config(cls: _ConfigClass) -> _ConfigClass:
-    unprocessed_config = _get_config(cls=cls)
-    processed_config = _process_config(cls=cls, unprocessed_config=unprocessed_config)
-    _apply_config_to_config_class(cls=cls, config=processed_config)
-    return cls
+        # Ensure user is not trying to use a configuration option with the name of "meta".
+        # We will be overriding it below to store the configuration of this class in.
+        if "meta" in cls.__dict__ or ("meta" in cls.__annotations__ and cls.__annotations__["meta"] != _ConfigMeta):
+            raise ValueError("`meta` is a reserved keyword and cannot be used as a configuration option.")
 
+        options: dict[str, _config_option.PartialConfigOption] = {
+            k: v for k, v in cls.__dict__.items() if isinstance(v, _config_option.PartialConfigOption)
+        }
 
-def _get_config(cls: _ConfigClass) -> typing.Dict[str, str]:
-    meta: _ConfigClassMeta = getattr(cls, "_meta")
+        # Raise if we find any untyped _config_option.ConfigOptions.
+        for option_name in options:
+            if option_name not in cls.__annotations__:
+                raise TypeError(f"{option_name} is untyped. Please add a type hint.")
 
-    if isinstance(meta.source_from, _EnvironmentVariables):
-        return _get_config_from_environment_variables(prefix=meta.prefix)
-    elif isinstance(meta.source_from, _LocalFile):
-        return _get_config_from_local_file(prefix=meta.prefix, filepath=meta.source_from.filepath)
-    else:
-        # this should never happen
-        raise AssertionError(f"Loading config from: {meta.source_from} is not supported.")
+        # Finish instantiation of _config_option.ConfigOptions instances with attributes that the user cannot supply,
+        # but are now known.
+        for option_name, option in options.items():
+            # We can assume here that the annotation is available, because of the typing checks we did earlier.
+            complete_option: _config_option.ConfigOption = option(
+                name=option_name,
+                prefix=option_prefix,
+                datatype=cls.__annotations__[option_name],
+            )
+            setattr(cls, option_name, complete_option)
 
-
-def _get_config_from_environment_variables(prefix: str) -> typing.Dict[str, str]:
-    return {key: value for key, value in os.environ.items() if key.startswith(prefix)}
-
-
-def _get_config_from_local_file(prefix: str, filepath: pathlib.Path) -> typing.Dict[str, str]:
-    try:
-        config_document = filepath.read_text()
-    except FileNotFoundError as e:
-        raise FileNotFoundError(f"File not found: {filepath}") from e
-    except PermissionError as e:
-        raise PermissionError(f"Encountered a permission error when trying to read file: {filepath}") from e
-
-    return _parse_config_document(prefix=prefix, config_document=config_document)
-
-
-def _parse_config_document(prefix: str, config_document: str) -> typing.Dict[str, str]:
-    config = {}
-    unparsed_config_lines = config_document.strip().split(_CONFIG_DOCUMENT_FILE_LINE_SEPARATOR)
-    for line in unparsed_config_lines:
-        key, value = line.split(_CONFIG_DOCUMENT_KEY_VALUE_SEPARATOR, 1)
-        if key.startswith(prefix):
-            config[key] = value
-    return config
-
-
-def _process_config(cls: _ConfigClass, unprocessed_config: typing.Dict[str, str]) -> typing.Dict[str, typing.Any]:
-    meta: _ConfigClassMeta = getattr(cls, "_meta")
-
-    processed_config = {}
-    for key, unprocessed_value in unprocessed_config.items():
-        config_option = key.split(meta.prefix, 1)[1]
-        if not config_option:
-            _log.warning(f"Found empty config option key: {key}")
-            continue
-        if config_option not in cls.__annotations__:
-            _log.warning(f"Config option not supported: {key}")
-            continue
-
-        processed_value = _process_config_value(
-            cls=cls, config_option=config_option, unprocessed_value=unprocessed_value
+        # We store this data in a container rather than on the Config itself to prevent name collisions.
+        cls.meta = _ConfigMeta(
+            name=name,
+            description=description,
+            option_prefix=option_prefix,
+            config_sources=config_sources if config_sources else _get_config_sources(),
+            lazy_load_config=lazy_load_config,
+            validators=validators or [],
         )
-        processed_config[config_option] = processed_value
 
-    return processed_config
+        if not cls.meta.lazy_load_config:
+            cls._load_config()
+
+    def __init__(self) -> None:
+        # TODO: can we make this work with instantiation?
+        raise TypeError("Config classes cannot be instantiated.")
+
+    @classmethod
+    def _load_config(cls) -> None:
+        config_data = {}
+        for config_source in reversed(cls.meta.config_sources):
+            # Start sourcing config data from provided config sources, backwards.
+            # Top of the list in cls.meta.config_sources takes precedence.
+            config_data |= {key.lower(): value for key, value in config_source(prefix=cls.meta.option_prefix).items()}
+
+        config_options = [val for val in cls.__dict__.values() if isinstance(val, _config_option.ConfigOption)]
+
+        for config_option in config_options:
+            if config_option.fully_qualified_name.lower() in config_data:
+                encoded_config_value: str = config_data.pop(config_option.fully_qualified_name.lower())
+                config_option.value = encoded_config_value
+            elif config_option.has_default:
+                continue
+            elif config_option.is_optional:
+                config_option.value = None
+            else:
+                raise ValueError(
+                    f"Required config option {config_option.fully_qualified_name} with no default was not set."
+                )
+
+        for unused_config_option in config_data:
+            _log.warning(f"Config option {unused_config_option} not supported by {cls.meta.name}.")
+
+        cls.meta.loaded = True
+        cls.validate()
+
+    @classmethod
+    def validate(cls) -> None:
+        for validator in cls.meta.validators:
+            validator(config=cls)
+
+    @classmethod
+    def reload_config(cls) -> None:
+        cls._load_config()
+
+    @classmethod
+    def save_to_file(cls, file: pathlib.Path) -> None:
+        # TODO
+        raise NotImplementedError()
+
+    @classmethod
+    def get_documentation(cls) -> str:
+        # TODO
+        raise NotImplementedError()
+
+    @classmethod
+    def get_config_option(cls, option: str) -> _config_option.ConfigOption:
+        return object.__getattribute__(cls, name=option)
+
+    @classmethod
+    def set_config_value(cls, option: str, value: _config_value_types.ConfigValueType) -> None:
+        config_option = cls.get_config_option(option=option)
+        config_option.value = value
+
+    @classmethod
+    def hardcode_config_value(cls, option: str, value: _config_value_types.ConfigValueType) -> None:
+        config_option = cls.get_config_option(option=option)
+        config_option.hardcode_value(value=value)
 
 
-def _process_config_value(cls: _ConfigClass, config_option: str, unprocessed_value: str) -> typing.Any:
-    meta: _ConfigClassMeta = getattr(cls, "_meta")
+# TODO: How do we allow custom config sources if SOURCE is a literal?
+class ConfigSourcesConfig(
+    Config,
+    name="Config Sources Config",
+    description="""
+    Configuration used by config sources to configure their behaviour, particularly around document sourcing.
+    """,
+    option_prefix="PYTHON_SDK_CONFIG_",
+    config_sources=[_config_sources.EnvironmentVariables()],
+):
+    SOURCE: typing.Literal[
+        "ENVIRONMENT_VARIABLES",
+        "LOCAL_FILE",
+        "S3_FILE",
+        "AWS_SECRETS_MANAGER_SECRET",
+        "AWS_PARAMETER_STORE_DOCUMENT",
+        "REMOTE_HTTP_FILE",
+    ] = _config_option.Option(
+        default="ENVIRONMENT_VARIABLES",
+        description="Where configurations will be sourced from.",
+    )
+    SOURCE_LOCAL_FILE_FILEPATH: typing.Optional[pathlib.Path] = _config_option.Option(
+        description="""
+        Filepath for the LOCAL_FILE config source. Required when PYTHON_SDK_CONFIG_SOURCE is set to LOCAL_FILE.
+        The file must exist and be readable by the running process.
+        """,
+        validators=[_config_value_validators.EnsureFileExists(), _config_value_validators.EnsurePathIsReadable()],
+    )
+    SOURCE_REMOTE_HTTP_FILE_URL: typing.Optional[str] = _config_option.Option(
+        description="""
+        URL for the REMOTE_HTTP_FILE config source. Required when PYTHON_SDK_CONFIG_SOURCE is set to REMOTE_HTTP_FILE.
+        """
+    )
+    SOURCE_REMOTE_HTTP_FILE_TIMEOUT: int = _config_option.Option(
+        default=10, description="Timeout for the REMOTE_HTTP_FILE config source."
+    )
+    SOURCE_REMOTE_HTTP_FILE_AUTHORIZATION_HEADER: typing.Optional[str] = _config_option.Option(
+        description="Authorization header to send along when accessing the REMOTE_HTTP_FILE config source."
+    )
+    SOURCE_REMOTE_HTTP_FILE_USER_AGENT_STRING: str = _config_option.Option(
+        default=f"python-sdk-{version.VERSION}",
+        description="User-Agent string to send along when accessing the REMOTE_HTTP_FILE config source.",
+    )
 
-    config_option_data_type = cls.__annotations__[config_option]
-    try:
-        processed_value = _decoding.decode_config_value(
-            maybe_string=unprocessed_value, data_type=config_option_data_type
-        )
-    except ValueError as e:
-        raise ValueError(
-            f"Could not cast config option {meta.prefix}{config_option} with value {unprocessed_value} to datatype "
-            f"{config_option_data_type}",
-        ) from e
+    @classmethod
+    def validate(cls) -> None:
+        if cls.SOURCE == "LOCAL_FILE" and not cls.SOURCE_LOCAL_FILE_FILEPATH:
+            raise _config_validators.ConfigValidationError(
+                "PYTHON_SDK_CONFIG_SOURCE_LOCAL_FILE_FILEPATH must be set when PYTHON_SDK_CONFIG_SOURCE is LOCAL_FILE."
+            )
+        if cls.SOURCE == "REMOTE_HTTP_FILE" and not cls.SOURCE_REMOTE_HTTP_FILE_URL:
+            raise _config_validators.ConfigValidationError(
+                "PYTHON_SDK_CONFIG_SOURCE_REMOTE_HTTP_FILE_URL must be set when PYTOHN_SDK_CONFIG_SOURCE is "
+                "REMOTE_HTTP_FILE."
+            )
 
-    return processed_value
 
-
-def _apply_config_to_config_class(cls: _ConfigClass, config: typing.Dict[str, str]) -> None:
-    meta: _ConfigClassMeta = getattr(cls, "_meta")
-
-    unset = object()
-    for config_option, data_type in cls.__annotations__.items():
-        default = getattr(cls, config_option, unset)
-        config_option_is_optional = _decoding.is_optional_type(data_type=data_type)
-        config_value = config.get(config_option, unset)
-
-        if config_value is not unset:
-            setattr(cls, config_option, config_value)
-        elif default is not unset:
-            setattr(cls, config_option, default)  # redundant, but more readable
-        elif config_option_is_optional:
-            setattr(cls, config_option, None)
-        else:
-            raise ValueError(f"Required config option {meta.prefix}{config_option} with no default was not set")
+def _get_config_sources() -> list["_config_sources.ConfigSource"]:
+    if ConfigSourcesConfig.SOURCE == "ENVIRONMENT_VARIABLES":
+        return [_config_sources.EnvironmentVariables()]
+    elif ConfigSourcesConfig.SOURCE == "LOCAL_FILE":
+        return [_config_sources.LocalFile(filepath=ConfigSourcesConfig.SOURCE_LOCAL_FILE_FILEPATH)]
+    elif ConfigSourcesConfig.SOURCE == "REMOTE_HTTP_FILE":
+        return [
+            _config_sources.RemoteHTTPFile(
+                url=ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_URL,
+                timeout=ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_TIMEOUT,
+                authorization_header=ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_AUTHORIZATION_HEADER,
+                user_agent_string=ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_USER_AGENT_STRING,
+            )
+        ]

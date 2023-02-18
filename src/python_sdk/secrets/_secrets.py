@@ -5,17 +5,16 @@ from python_sdk import config
 
 
 # TODO(lijok): something to prevent this from being configured using secrets
-@config.config(prefix="PYTHON_SDK_SECRETS_")
-class _Config:
-    ENGINE: typing.Literal["AWS_SM"]
-    ENGINE_AWS_SM_SECRET_KEY_ID: typing.Optional[str]
-    ENGINE_AWS_SM_SECRET_ACCESS_KEY: typing.Optional[str]
-    ENGINE_AWS_SM_SESSION_TOKEN: typing.Optional[str]
-    ENGINE_AWS_SM_REGION_NAME: typing.Optional[str]
-    ENGINE_AWS_SM_API_VERSION: typing.Optional[str]
-    ENGINE_AWS_SM_USE_SSL: bool = True
-    ENGINE_AWS_SM_VERIFY: bool = True
-    ENGINE_AWS_SM_ENDPOINT_URL: typing.Optional[str]
+class _Config(config.Config, option_prefix="PYTHON_SDK_SECRETS_"):
+    ENGINE: typing.Literal["AWS_SM"] = config.Option(default="AWS_SM")
+    ENGINE_AWS_SM_SECRET_KEY_ID: typing.Optional[str] = config.Option()
+    ENGINE_AWS_SM_SECRET_ACCESS_KEY: typing.Optional[str] = config.Option()
+    ENGINE_AWS_SM_SESSION_TOKEN: typing.Optional[str] = config.Option()
+    ENGINE_AWS_SM_REGION_NAME: typing.Optional[str] = config.Option()
+    ENGINE_AWS_SM_API_VERSION: typing.Optional[str] = config.Option()
+    ENGINE_AWS_SM_USE_SSL: bool = config.Option(default=True)
+    ENGINE_AWS_SM_VERIFY: bool = config.Option(default=True)
+    ENGINE_AWS_SM_ENDPOINT_URL: typing.Optional[str] = config.Option()
 
 
 class _SecretsEngine(typing.Protocol):

@@ -13,14 +13,13 @@ from python_sdk import config
 
 
 # TODO(lijok): Validate LOG_DESTINATION_ROTATING_FILE_PATH is writable
-@config.config(prefix="PYTHON_SDK_LOG_")
-class _Config:
-    LEVEL: typing.Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
-    OUTPUT_STYLE: typing.Literal["MACHINE_READABLE", "HUMAN_READABLE"] = "MACHINE_READABLE"
-    DESTINATION: typing.Literal["STDOUT", "STDERR", "ROTATING_FILE"] = "STDOUT"
-    DESTINATION_ROTATING_FILE_PATH: typing.Optional[str] = None
-    DESTINATION_ROTATING_FILE_MAX_SIZE_BYTES: int = 1073741824
-    DESTINATION_ROTATING_FILE_MAX_NUMBER_OF_FILES: int = 10
+class _Config(config.Config, option_prefix="PYTHON_SDK_LOG_"):
+    LEVEL: typing.Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = config.Option(default="INFO")
+    OUTPUT_STYLE: typing.Literal["MACHINE_READABLE", "HUMAN_READABLE"] = config.Option(default="MACHINE_READABLE")
+    DESTINATION: typing.Literal["STDOUT", "STDERR", "ROTATING_FILE"] = config.Option(default="STDOUT")
+    DESTINATION_ROTATING_FILE_PATH: typing.Optional[str] = config.Option()
+    DESTINATION_ROTATING_FILE_MAX_SIZE_BYTES: int = config.Option(default=1073741824)
+    DESTINATION_ROTATING_FILE_MAX_NUMBER_OF_FILES: int = config.Option(default=10)
 
 
 # now that we have a config, set up a logger as dictated by the config
