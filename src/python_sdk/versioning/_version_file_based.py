@@ -1,9 +1,9 @@
 import functools
+import inspect
 import json
 import os
 import pathlib
 import sys
-import inspect
 
 _VERSION_FILE_NAME: str = "version"
 
