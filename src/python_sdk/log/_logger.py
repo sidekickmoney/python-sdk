@@ -19,6 +19,15 @@ class _Config(config.Config, option_prefix="PYTHON_SDK_LOG_"):
     DESTINATION_ROTATING_FILE_PATH: typing.Optional[str] = config.Option(validators=[config.EnsurePathIsWritable()])
     DESTINATION_ROTATING_FILE_MAX_SIZE_BYTES: int = config.Option(default=1073741824)
     DESTINATION_ROTATING_FILE_MAX_NUMBER_OF_FILES: int = config.Option(default=10)
+    INCLUDE_LOG_FILENAME: bool = config.Option(default=False)
+    INCLUDE_FUNCTION_NAME: bool = config.Option(default=False)
+    INCLUDE_LINE_NUMBER: bool = config.Option(default=False)
+    INCLUDE_MODULE_NAME: bool = config.Option(default=False)
+    INCLUDE_MODULE_PATH: bool = config.Option(default=False)
+    INCLUDE_PROCESS_ID: bool = config.Option(default=False)
+    INCLUDE_PROCESS_NAME: bool = config.Option(default=False)
+    INCLUDE_THREAD_ID: bool = config.Option(default=False)
+    INCLUDE_THREAD_NAME: bool = config.Option(default=False)
 
 
 # now that we have a config, set up a logger as dictated by the config
