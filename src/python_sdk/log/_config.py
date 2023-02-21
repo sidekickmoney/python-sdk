@@ -9,7 +9,9 @@ from python_sdk.log import _formatters
 
 
 class Log(config.Config, option_prefix="PYTHON_SDK_LOG_"):
-    LEVEL: typing.Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = config.Option(default="INFO")
+    LEVEL: typing.Literal["DEBUG", "INFO", "SECURITY", "AUDIT", "WARNING", "ERROR", "CRITICAL"] = config.Option(
+        default="INFO"
+    )
     OUTPUT_STYLE: typing.Literal["MACHINE_READABLE", "HUMAN_READABLE"] = config.Option(default="MACHINE_READABLE")
     DESTINATION: typing.Literal["STDOUT", "STDERR", "ROTATING_FILE"] = config.Option(default="STDOUT")
     DESTINATION_ROTATING_FILE_PATH: typing.Optional[str] = config.Option(validators=[config.EnsurePathIsWritable()])

@@ -3,6 +3,7 @@ import sys
 import typing
 
 from python_sdk.log import _context
+from python_sdk.log import _log_levels
 
 
 def _log(
@@ -42,6 +43,14 @@ def info(message: typing.Any, **kwargs: typing.Any) -> None:
 
 def debug(message: typing.Any, **kwargs: typing.Any) -> None:
     _log(level=logging.DEBUG, message=message, _stack_level=3, **kwargs)
+
+
+def security(message: typing.Any, **kwargs: typing.Any) -> None:
+    _log(level=_log_levels.SECURITY, message=message, _stack_level=3, **kwargs)
+
+
+def audit(message: typing.Any, **kwargs: typing.Any) -> None:
+    _log(level=_log_levels.AUDIT, message=message, _stack_level=3, **kwargs)
 
 
 def exception(message: typing.Any, exception: typing.Optional[BaseException] = None, **kwargs: typing.Any) -> None:
