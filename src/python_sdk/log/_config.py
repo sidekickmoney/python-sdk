@@ -26,6 +26,7 @@ class Log(config.Config, option_prefix="PYTHON_SDK_LOG_"):
     INCLUDE_PROCESS_NAME: bool = config.Option(default=False)
     INCLUDE_THREAD_ID: bool = config.Option(default=False)
     INCLUDE_THREAD_NAME: bool = config.Option(default=False)
+    INCLUDE_PYTHON_SDK_VERSION: bool = config.Option(default=False)
 
     # TODO: config should give us a dedicated method for running post-refresh hooks
     @classmethod
@@ -65,6 +66,7 @@ class Log(config.Config, option_prefix="PYTHON_SDK_LOG_"):
             include_process_name=cls.INCLUDE_PROCESS_NAME,
             include_thread_id=cls.INCLUDE_THREAD_ID,
             include_thread_name=cls.INCLUDE_THREAD_NAME,
+            include_python_sdk_version=cls.INCLUDE_PYTHON_SDK_VERSION,
         )
 
     @classmethod
