@@ -5,6 +5,7 @@ import logging
 import traceback
 import typing
 
+import python_sdk
 from python_sdk.log import _log
 
 
@@ -18,6 +19,7 @@ class StructuredLogFormatter:
     include_process_name: bool
     include_thread_id: bool
     include_thread_name: bool
+    include_python_sdk_version: bool
 
     def __init__(
         self,
@@ -30,6 +32,7 @@ class StructuredLogFormatter:
         include_process_name: bool = True,
         include_thread_id: bool = True,
         include_thread_name: bool = True,
+        include_python_sdk_version: bool = True,
     ):
         self.include_current_log_filename = include_current_log_filename
         self.include_function_name = include_function_name
@@ -40,6 +43,7 @@ class StructuredLogFormatter:
         self.include_process_name = include_process_name
         self.include_thread_id = include_thread_id
         self.include_thread_name = include_thread_name
+        self.include_python_sdk_version = include_python_sdk_version
 
     def format(self, record: logging.LogRecord) -> typing.Dict[str, typing.Any]:
         timestamp = datetime.datetime.fromtimestamp(record.created).replace(tzinfo=datetime.timezone.utc)
@@ -64,6 +68,8 @@ class StructuredLogFormatter:
             data["thread_id"] = record.thread
         if self.include_thread_name:
             data["thread_name"] = record.threadName
+        if self.include_python_sdk_version:
+            data["python_sdk_version"] = python_sdk.__version__
 
         if record.exc_info and not record.exc_text:
             # Cache the traceback text to avoid converting it multiple times
