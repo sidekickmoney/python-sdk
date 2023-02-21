@@ -3,9 +3,9 @@ import datetime
 import pathlib
 import typing
 
+import python_sdk
 from python_sdk import log
 from python_sdk import sentinel
-from python_sdk import version
 from python_sdk.config import _config_option
 from python_sdk.config import _config_sources
 from python_sdk.config import _config_value_types
@@ -246,7 +246,7 @@ class ConfigSourcesConfig(
         description="Authorization header to send along when accessing the REMOTE_HTTP_FILE config source."
     )
     SOURCE_REMOTE_HTTP_FILE_USER_AGENT_STRING: str = _config_option.Option(
-        default=f"python-sdk-{version.VERSION}",
+        default=f"python-sdk-{python_sdk.__version__}",
         description="User-Agent string to send along when accessing the REMOTE_HTTP_FILE config source.",
     )
 
