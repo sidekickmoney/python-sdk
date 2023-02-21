@@ -4,7 +4,7 @@ import typing
 import urllib.error
 import urllib.request
 
-from python_sdk import version
+import python_sdk
 
 # TODO: support custom CA's and proxies
 
@@ -212,7 +212,7 @@ class RemoteHTTPFile(ConfigSource):
         url: str,
         timeout: int = 10,
         authorization_header: typing.Optional[str] = None,
-        user_agent_string: str = f"python-sdk-{version.VERSION}",
+        user_agent_string: str = f"python-sdk-{python_sdk.__version__}",
     ) -> None:
         if not url.startswith("http://") and not url.startswith("https://"):
             raise ValueError("RemoteHTTPFile only supports http and https endpoints.")

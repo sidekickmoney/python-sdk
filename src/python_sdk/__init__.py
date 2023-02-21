@@ -1,1 +1,1 @@
-from python_sdk.version import VERSION
+from python_sdk.__version__ import __version__ as __version__
