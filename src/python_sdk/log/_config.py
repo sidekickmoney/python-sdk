@@ -28,9 +28,8 @@ class Log(config.Config, option_prefix="PYTHON_SDK_LOG_"):
     INCLUDE_THREAD_NAME: bool = config.Option(default=False)
     INCLUDE_PYTHON_SDK_VERSION: bool = config.Option(default=False)
 
-    # TODO: config should give us a dedicated method for running post-refresh hooks
     @classmethod
-    def validate(cls) -> None:
+    def post_load_hook(cls) -> None:
         cls.configure_logging()
 
     @classmethod

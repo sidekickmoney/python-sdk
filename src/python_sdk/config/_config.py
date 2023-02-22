@@ -170,11 +170,16 @@ class Config(metaclass=_ConfigMetaclass):
 
         cls.meta.loaded = True
         cls.validate()
+        cls.post_load_hook()
 
     @classmethod
     def validate(cls) -> None:
         for validator in cls.meta.validators:
             validator(config=cls)
+
+    @classmethod
+    def post_load_hook(cls) -> None:
+        pass
 
     @classmethod
     def reload_config(cls) -> None:
