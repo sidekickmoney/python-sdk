@@ -198,11 +198,13 @@ class Config(metaclass=_ConfigMetaclass):
     def set_config_value(cls, option: str, value: _config_value_types.ConfigValueType) -> None:
         config_option = cls.get_config_option(option=option)
         config_option.value = value
+        cls.validate()
 
     @classmethod
     def hardcode_config_value(cls, option: str, value: _config_value_types.ConfigValueType) -> None:
         config_option = cls.get_config_option(option=option)
         config_option.hardcode_value(value=value)
+        cls.validate()
 
 
 # TODO: How do we allow custom config sources if SOURCE is a literal?
