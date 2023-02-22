@@ -1,3 +1,4 @@
+import copy
 import datetime
 import io
 import json
@@ -47,9 +48,17 @@ class StructuredLogFormatter:
 
     def format(self, record: logging.LogRecord) -> typing.Dict[str, typing.Any]:
         timestamp = datetime.datetime.fromtimestamp(record.created).replace(tzinfo=datetime.timezone.utc)
-        data = {"log_level": record.levelname, "message": record.msg, "timestamp": timestamp}
+
+        message = record.msg
         if record.args:
-            data["message"] = record.msg % record.args
+            message = record.msg % record.args
+        message, embedded_context = self._yank_embedded_context_from_message(message=message)
+
+        if not hasattr(record, "context"):
+            record.context = {}
+        record.context |= embedded_context
+
+        data = {"log_level": record.levelname, "message": message, "timestamp": timestamp}
         if self.include_current_log_filename:
             data["filename"] = record.filename
         if self.include_function_name:
@@ -108,6 +117,29 @@ class StructuredLogFormatter:
         if s[-1:] == "\n":
             s = s[:-1]
         return s
+
+    def _yank_embedded_context_from_message(self, message: str) -> tuple[str, dict[str, typing.Any]]:
+        new_message: str = message
+        embedded_context: dict[str, typing.Any] = {}
+
+        if "=" not in message:
+            return new_message, embedded_context
+
+        tokenized_message = message.split()
+        for word in reversed(copy.copy(tokenized_message)):
+            if "=" not in word:
+                # In a message such as: "A User with the name=Tom connected from ip=127.0.0.1"
+                # We will only yank "ip=127.0.0.1", else we risk the message not making sense.
+                # To save ourselves the time processing the rest of the message, after we encounter a word
+                # without the context token "=", we break.
+                break
+
+            context_key, context_value = word.split("=")
+            embedded_context[context_key] = context_value
+            tokenized_message.pop(-1)
+
+        new_message = " ".join(tokenized_message)
+        return new_message, embedded_context
 
 
 class StructuredLogMachineReadableFormatter(StructuredLogFormatter):

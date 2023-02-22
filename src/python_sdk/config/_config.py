@@ -1,10 +1,10 @@
 import dataclasses
 import datetime
+import logging
 import pathlib
 import typing
 
 import python_sdk
-from python_sdk import log
 from python_sdk import sentinel
 from python_sdk.config import _config_option
 from python_sdk.config import _config_sources
@@ -166,8 +166,7 @@ class Config(metaclass=_ConfigMetaclass):
                 )
 
         for unused_config_option in config_data:
-            # TODO: cyclical import
-            log.warning(f"Config option {unused_config_option} not supported by {cls.meta.name}.")
+            logging.warning(f"Config option {unused_config_option} not supported by {cls.meta.name}.")
 
         cls.meta.loaded = True
         cls.validate()
