@@ -11,10 +11,20 @@ def get_context() -> dict[str, typing.Any]:
     return _CONTEXT.get()
 
 
-def bind(**kwargs: dict[str, typing.Any]) -> None:
-    existing_context = _CONTEXT.get()
-    existing_context.update(kwargs)
-    _CONTEXT.set(existing_context)
+class bind:
+    local_context: dict[str, typing.Any]
+
+    def __init__(self, **kwargs: dict[str, typing.Any]) -> None:
+        self.local_context = kwargs
+        existing_context = _CONTEXT.get()
+        existing_context.update(kwargs)
+        _CONTEXT.set(existing_context)
+
+    def __enter__(self) -> None:
+        return
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        unbind(*self.local_context.keys())
 
 
 def unbind(*args: tuple[str]) -> None:
