@@ -197,7 +197,7 @@ class Config(metaclass=_ConfigMetaclass):
 
     @classmethod
     def get_config_option(cls, option: str) -> _config_option.ConfigOption:
-        return object.__getattribute__(cls, name=option)
+        return object.__getattribute__(cls, option)
 
     @classmethod
     def set_config_value(cls, option: str, value: _config_value_types.ConfigValueType) -> None:
