@@ -40,7 +40,7 @@ class ConfigOption:
             typing.Callable[[], typing.Union["_config_value_types.ConfigValueType"]],
             sentinel.Sentinel,
         ] = Unset,
-        validators: typing.List["_config_value_validators.ConfigValueValidator"] | None = None,
+        validators: list["_config_value_validators.ConfigValueValidator"] | None = None,
         is_sensitive: bool = False,
     ) -> None:
         self.name = name
@@ -142,7 +142,7 @@ def Option(
     ] = Unset,
     description: str = "",
     is_sensitive: bool = False,
-    validators: typing.List["_config_value_validators.ConfigValueValidator"] | None = None,
+    validators: list["_config_value_validators.ConfigValueValidator"] | None = None,
 ) -> typing.Any:
     return PartialConfigOption(
         ConfigOption, default=default, description=description, is_sensitive=is_sensitive, validators=validators

@@ -49,9 +49,9 @@ class _ConfigMeta:
     name: str
     description: str
     option_prefix: str
-    config_sources: typing.List["_config_sources.ConfigSource"]
+    config_sources: list["_config_sources.ConfigSource"]
     lazy_load_config: bool
-    validators: typing.List["_config_validators.ConfigValidator"]
+    validators: list["_config_validators.ConfigValidator"]
     last_loaded_at: datetime.datetime | None = None
     _loaded: bool = False
 
@@ -60,9 +60,9 @@ class _ConfigMeta:
         name: str,
         description: str,
         option_prefix: str,
-        config_sources: typing.List["_config_sources.ConfigSource"],
+        config_sources: list["_config_sources.ConfigSource"],
         lazy_load_config: bool,
-        validators: typing.List["_config_validators.ConfigValidator"],
+        validators: list["_config_validators.ConfigValidator"],
     ):
         self.name = name
         self.description = description
@@ -94,9 +94,9 @@ class Config(metaclass=_ConfigMetaclass):
         name: str = "Application Configuration",
         description: str = "",
         option_prefix: str = "",
-        config_sources: typing.List["_config_sources.ConfigSource"] = None,
+        config_sources: list["_config_sources.ConfigSource"] = None,
         lazy_load_config: bool = False,
-        validators: typing.List["_config_validators.ConfigValidator"] | None = None,  # TODO: this or function
+        validators: list["_config_validators.ConfigValidator"] | None = None,  # TODO: this or function
     ) -> None:
         super().__init_subclass__()
 
