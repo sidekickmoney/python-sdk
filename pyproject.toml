@@ -61,7 +61,7 @@ hashing = [
     "argon2-cffi>=21.3"
 ]
 
-secrets = [
+aws = [
     "boto3>=1.24"
 ]
 
