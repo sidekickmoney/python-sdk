@@ -14,7 +14,7 @@ class Log(config.Config, option_prefix="PYTHON_SDK_LOG_"):
     )
     OUTPUT_STYLE: typing.Literal["MACHINE_READABLE", "HUMAN_READABLE"] = config.Option(default="MACHINE_READABLE")
     DESTINATION: typing.Literal["STDOUT", "STDERR", "ROTATING_FILE"] = config.Option(default="STDOUT")
-    DESTINATION_ROTATING_FILE_PATH: typing.Optional[str] = config.Option(validators=[config.EnsurePathIsWritable()])
+    DESTINATION_ROTATING_FILE_PATH: str | None = config.Option(validators=[config.EnsurePathIsWritable()])
     DESTINATION_ROTATING_FILE_MAX_SIZE_BYTES: int = config.Option(default=1073741824)
     DESTINATION_ROTATING_FILE_MAX_NUMBER_OF_FILES: int = config.Option(default=10)
     INCLUDE_LOG_FILENAME: bool = config.Option(default=False)

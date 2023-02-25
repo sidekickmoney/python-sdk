@@ -235,14 +235,14 @@ class ConfigSourcesConfig(
         default="ENVIRONMENT_VARIABLES",
         description="Where configurations will be sourced from.",
     )
-    SOURCE_LOCAL_FILE_FILEPATH: typing.Optional[pathlib.Path] = _config_option.Option(
+    SOURCE_LOCAL_FILE_FILEPATH: pathlib.Path | None = _config_option.Option(
         description="""
         Filepath for the LOCAL_FILE config source. Required when PYTHON_SDK_CONFIG_SOURCE is set to LOCAL_FILE.
         The file must exist and be readable by the running process.
         """,
         validators=[_config_value_validators.EnsureFileExists(), _config_value_validators.EnsurePathIsReadable()],
     )
-    SOURCE_REMOTE_HTTP_FILE_URL: typing.Optional[str] = _config_option.Option(
+    SOURCE_REMOTE_HTTP_FILE_URL: str | None = _config_option.Option(
         description="""
         URL for the REMOTE_HTTP_FILE config source. Required when PYTHON_SDK_CONFIG_SOURCE is set to REMOTE_HTTP_FILE.
         """
@@ -250,7 +250,7 @@ class ConfigSourcesConfig(
     SOURCE_REMOTE_HTTP_FILE_TIMEOUT: int = _config_option.Option(
         default=10, description="Timeout for the REMOTE_HTTP_FILE config source."
     )
-    SOURCE_REMOTE_HTTP_FILE_AUTHORIZATION_HEADER: typing.Optional[str] = _config_option.Option(
+    SOURCE_REMOTE_HTTP_FILE_AUTHORIZATION_HEADER: str | None = _config_option.Option(
         description="Authorization header to send along when accessing the REMOTE_HTTP_FILE config source."
     )
     SOURCE_REMOTE_HTTP_FILE_USER_AGENT_STRING: str = _config_option.Option(
