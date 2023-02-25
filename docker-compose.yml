@@ -9,9 +9,9 @@ services:
       - "0.0.0.0:4510-4559:4510-4559"  # external service port range
       - "0.0.0.0:4566:4566"            # LocalStack Edge Proxy
     environment:
-      SERVICES: secretsmanager
+      SERVICES: secretsmanager,systemsmanager
     volumes:
-      - "/tmp/localstack:/tmp/localstack"
+      - "${LOCALSTACK_VOLUME_DIR:-./.docker}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
       test: ["CMD", "curl", "http://localhost:4566/health"]

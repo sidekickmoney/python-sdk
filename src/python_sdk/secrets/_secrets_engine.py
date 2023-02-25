@@ -1,6 +1,6 @@
 import typing
 
-SecretValue: typing.TypeAlias = str | bytes | dict[str, typing.Any]
+SecretValue: typing.TypeAlias = str | bytes | dict[str, typing.Any] | list[str]
 
 
 class SecretsEngine(typing.Protocol):
