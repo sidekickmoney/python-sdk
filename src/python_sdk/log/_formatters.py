@@ -33,7 +33,7 @@ class StructuredLogFormatter:
         include_thread_id: bool = True,
         include_thread_name: bool = True,
         include_python_sdk_version: bool = True,
-    ):
+    ) -> None:
         self.include_current_log_filename = include_current_log_filename
         self.include_function_name = include_function_name
         self.include_line_number = include_line_number

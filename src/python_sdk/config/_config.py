@@ -63,7 +63,7 @@ class _ConfigMeta:
         config_sources: list["_config_sources.ConfigSource"],
         lazy_load_config: bool,
         validators: list["_config_validators.ConfigValidator"],
-    ):
+    ) -> None:
         self.name = name
         self.description = description
         self.option_prefix = option_prefix
