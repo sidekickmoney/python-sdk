@@ -53,5 +53,5 @@ def audit(message: typing.Any, **kwargs: typing.Any) -> None:
     _log(level=_log_levels.AUDIT, message=message, _stack_level=3, **kwargs)
 
 
-def exception(message: typing.Any, exception: typing.Optional[BaseException] = None, **kwargs: typing.Any) -> None:
+def exception(message: typing.Any, exception: BaseException | None = None, **kwargs: typing.Any) -> None:
     _log(level=logging.ERROR, message=message, exception=exception or sys.exc_info(), _stack_level=3, **kwargs)
