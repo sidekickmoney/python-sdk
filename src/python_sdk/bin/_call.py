@@ -1,11 +1,11 @@
 import dataclasses
 import functools
+import logging
 import os
 import pathlib
 import subprocess
 import typing
 
-from python_sdk import log
 from python_sdk import utils
 
 
@@ -60,7 +60,7 @@ def call(
         command.insert(0, "arch")
         command.insert(1, f"-{force_arch}")
 
-    log.info("Calling command", binary=binary_full_path, command=command)
+    logging.debug(f"Calling command. binary={binary_full_path} {command=}")
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env)
 
     output = ""
@@ -69,8 +69,8 @@ def call(
         if stream_output:
             stream_printer(line)
 
-    log.debug(
-        "Called command output", binary=binary_full_path, command=command, output=output, exit_code=process.returncode
+    logging.debug(
+        f"Called command output. binary={binary_full_path} {command=} {output=} exit_code={process.returncode}"
     )
 
     process.wait()
