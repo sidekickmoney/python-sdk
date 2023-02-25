@@ -7,7 +7,6 @@ import traceback
 import typing
 
 import python_sdk
-from python_sdk.log import _log
 
 
 class StructuredLogFormatter:
@@ -92,7 +91,7 @@ class StructuredLogFormatter:
         context = getattr(record, "context", {})
         for key in context:
             if key in data:
-                _log.warning(f"Attempted to overwrite log attribute: {key}. Log attributes cannot be overwritten.")
+                logging.warning(f"Attempted to overwrite log attribute: {key}. Log attributes cannot be overwritten.")
             else:
                 data[key] = context[key]
 
