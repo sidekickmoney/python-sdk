@@ -1,5 +1,5 @@
 class BoolFlag:
-    def __init__(self, value: bool = False):
+    def __init__(self, value: bool = False) -> None:
         self._value = value
 
     def set(self) -> None:
