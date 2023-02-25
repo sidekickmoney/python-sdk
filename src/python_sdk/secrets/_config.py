@@ -42,7 +42,7 @@ class Secrets(config.Config, option_prefix="PYTHON_SDK_SECRETS_"):
     @classmethod
     @functools.lru_cache(maxsize=1)
     def get_secrets_engine(cls) -> _secrets_engine.SecretsEngine:
-        logging.debug(f"Using {cls.ENGINE} secrets engine for fetching secrets.")
+        logging.debug(f"Secrets engine for fetching secrets picked. engine={cls.ENGINE}")
         if cls.ENGINE == "AWS_SM":
             return cls._get_aws_sm_secrets_engine()
         elif cls.ENGINE == "AWS_PS":
