@@ -15,9 +15,7 @@ class Sentinel:
     _repr: str
     _module_name: str
 
-    def __new__(
-        cls, name: str, repr: typing.Optional[str] = None, module_name: typing.Optional[str] = None
-    ) -> "Sentinel":
+    def __new__(cls, name: str, repr: str | None = None, module_name: str | None = None) -> "Sentinel":
         """Implements the singleton pattern."""
         final_name: str = name
         final_repr: str = repr or f"<{name}>"
@@ -27,7 +25,7 @@ class Sentinel:
         registry_key = sys.intern(f"{cls.__module__}-{cls.__qualname__}-{final_module_name}-{final_name}")
 
         with _lock:
-            sentinel: typing.Optional[Sentinel] = _registry.get(registry_key, None)
+            sentinel: Sentinel | None = _registry.get(registry_key, None)
             if sentinel is not None:
                 # For hot code reload, if the Sentinel class was re-defined, we switch it to the new class, and continue
                 # using the old instance.

@@ -204,14 +204,14 @@ class RemoteHTTPFile(ConfigSource):
     """
     url: str
     timeout: int
-    authorization_header: typing.Optional[str]
+    authorization_header: str | None
     user_agent_string: str
 
     def __init__(
         self,
         url: str,
         timeout: int = 10,
-        authorization_header: typing.Optional[str] = None,
+        authorization_header: str | None = None,
         user_agent_string: str = f"python-sdk-{python_sdk.__version__}",
     ) -> None:
         if not url.startswith("http://") and not url.startswith("https://"):

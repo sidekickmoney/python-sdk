@@ -1,5 +1,4 @@
 import base64
-import typing
 
 
 def b64url_encode(s: bytes) -> bytes:
@@ -7,7 +6,7 @@ def b64url_encode(s: bytes) -> bytes:
 
 
 # TODO: add validation
-def b64url_decode(s: typing.Union[bytes, str]) -> bytes:
+def b64url_decode(s: bytes | str) -> bytes:
     if isinstance(s, bytes):
         return _b64url_decode_bytes(s)
     return _b64url_decode_string(s)

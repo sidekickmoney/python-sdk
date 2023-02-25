@@ -52,7 +52,7 @@ class _ConfigMeta:
     config_sources: typing.List["_config_sources.ConfigSource"]
     lazy_load_config: bool
     validators: typing.List["_config_validators.ConfigValidator"]
-    last_loaded_at: typing.Optional[datetime.datetime] = None
+    last_loaded_at: datetime.datetime | None = None
     _loaded: bool = False
 
     def __init__(
@@ -96,7 +96,7 @@ class Config(metaclass=_ConfigMetaclass):
         option_prefix: str = "",
         config_sources: typing.List["_config_sources.ConfigSource"] = None,
         lazy_load_config: bool = False,
-        validators: typing.Optional[typing.List["_config_validators.ConfigValidator"]] = None,  # TODO: this or function
+        validators: typing.List["_config_validators.ConfigValidator"] | None = None,  # TODO: this or function
     ) -> None:
         super().__init_subclass__()
 

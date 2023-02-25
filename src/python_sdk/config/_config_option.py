@@ -142,7 +142,7 @@ def Option(
     ] = Unset,
     description: str = "",
     is_sensitive: bool = False,
-    validators: typing.Optional[typing.List["_config_value_validators.ConfigValueValidator"]] = None,
+    validators: typing.List["_config_value_validators.ConfigValueValidator"] | None = None,
 ) -> typing.Any:
     return PartialConfigOption(
         ConfigOption, default=default, description=description, is_sensitive=is_sensitive, validators=validators

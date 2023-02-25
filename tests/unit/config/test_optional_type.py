@@ -8,9 +8,9 @@ from python_sdk.config import _optional_type
 @pytest.mark.parametrize(
     "data_type,expected_result",
     [
-        (typing.Optional[str], True),
-        (typing.Optional[int], True),
-        (typing.Optional[bool], True),
+        (str | None, True),
+        (int | None, True),
+        (bool | None, True),
         (typing.Union[str, None], True),
         (typing.Union[int, None], True),
         (typing.Union[None, str], True),
