@@ -119,6 +119,17 @@ class StructuredLogFormatter:
         return s
 
     def _yank_embedded_context_from_message(self, message: str) -> tuple[str, dict[str, typing.Any]]:
+        # Given a logged message:
+        #
+        # ```py
+        # user_id: int = 123
+        # user_name: str = "test"
+        # logging.info(f"User logged in. {user_id=} {user_name=}")
+        # ```
+        #
+        # The resulting message will be:
+        # User logged in. user_id=123 user_name='test'
+
         new_message: str = message
         embedded_context: dict[str, typing.Any] = {}
 
@@ -128,14 +139,14 @@ class StructuredLogFormatter:
         tokenized_message = message.split()
         for word in reversed(copy.copy(tokenized_message)):
             if "=" not in word:
-                # In a message such as: "A User with the name=Tom connected from ip=127.0.0.1"
+                # In a message such as: "A User with the name='Tom' connected from ip='127.0.0.1'"
                 # We will only yank "ip=127.0.0.1", else we risk the message not making sense.
                 # To save ourselves the time processing the rest of the message, after we encounter a word
                 # without the context token "=", we break.
                 break
 
             context_key, context_value = word.split("=")
-            embedded_context[context_key] = context_value
+            embedded_context[context_key] = context_value.strip("'")
             tokenized_message.pop(-1)
 
         new_message = " ".join(tokenized_message)
