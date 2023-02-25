@@ -6,7 +6,7 @@ import sys
 import threading
 import typing
 
-_registry: typing.Dict[str, "Sentinel"] = {}
+_registry: dict[str, "Sentinel"] = {}
 _lock = threading.Lock()
 
 

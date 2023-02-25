@@ -45,7 +45,7 @@ class StructuredLogFormatter:
         self.include_thread_name = include_thread_name
         self.include_python_sdk_version = include_python_sdk_version
 
-    def format(self, record: logging.LogRecord) -> typing.Dict[str, typing.Any]:
+    def format(self, record: logging.LogRecord) -> dict[str, typing.Any]:
         timestamp = datetime.datetime.fromtimestamp(record.created).replace(tzinfo=datetime.timezone.utc)
 
         message = record.msg
