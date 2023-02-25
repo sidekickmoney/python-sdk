@@ -21,7 +21,7 @@ class ConfigSource(typing.Protocol):
     name: str
     description: str
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             PermissionError: Could not read from config source.
@@ -34,12 +34,12 @@ class ConfigSource(typing.Protocol):
 class StaticDictionary(ConfigSource):
     name: str = "Static Dictionary"
     description: str = "Sources configuration from a static dictionary."
-    dictionary: typing.Dict[str, str]
+    dictionary: dict[str, str]
 
-    def __init__(self, dictionary: typing.Dict[str, str]) -> None:
+    def __init__(self, dictionary: dict[str, str]) -> None:
         self.dictionary = dictionary
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         return {key: val for key, val in self.dictionary.items() if key.lower().startswith(prefix.lower())}
 
 
@@ -47,7 +47,7 @@ class EnvironmentVariables(ConfigSource):
     name: str = "Environment Variables"
     description: str = "Sources configuration from the environment variables."
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         return StaticDictionary(dictionary=dict(os.environ))(prefix=prefix)
 
 
@@ -71,7 +71,7 @@ class FileObject(ConfigSource):
     def __init__(self, file: typing.TextIO) -> None:
         self.file = file
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             ValueError: Could not parse the config file, which may be malformed.
@@ -107,7 +107,7 @@ class LocalFile(ConfigSource):
     def __init__(self, filepath: pathlib.Path) -> None:
         self.filepath: pathlib.Path = filepath
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             PermissionError: Could not read from config source.
@@ -131,7 +131,7 @@ class S3File(ConfigSource):
     ```
     """
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             PermissionError: Could not read from config source.
@@ -155,7 +155,7 @@ class AWSSecretsManagerSecret(ConfigSource):
     ```
     """
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             PermissionError: Could not read from config source.
@@ -179,7 +179,7 @@ class AWSParameterStoreDocument(ConfigSource):
     ```
     """
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             PermissionError: Could not read from config source.
@@ -221,7 +221,7 @@ class RemoteHTTPFile(ConfigSource):
         self.authorization_header = authorization_header
         self.user_agent_string = user_agent_string
 
-    def __call__(self, prefix: str) -> typing.Dict[str, str]:
+    def __call__(self, prefix: str) -> dict[str, str]:
         """
         Raises:
             PermissionError: Could not read from config source.
