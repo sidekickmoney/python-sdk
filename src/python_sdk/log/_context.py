@@ -1,4 +1,5 @@
 import contextvars
+import copy
 import typing
 
 _DEFAULT_CONTEXT_VALUE_FACTORY = dict
@@ -8,7 +9,11 @@ _CONTEXT: contextvars.ContextVar = contextvars.ContextVar(
 
 
 def get_context() -> dict[str, typing.Any]:
-    return _CONTEXT.get()
+    return copy.copy(_CONTEXT.get())
+
+
+def set_context(value: dict[str, typing.Any]) -> None:
+    _CONTEXT.set(value)
 
 
 class bind:
@@ -16,9 +21,7 @@ class bind:
 
     def __init__(self, **kwargs: dict[str, typing.Any]) -> None:
         self.local_context = kwargs
-        existing_context = _CONTEXT.get()
-        existing_context.update(kwargs)
-        _CONTEXT.set(existing_context)
+        set_context(get_context() | kwargs)
 
     def __enter__(self) -> None:
         return
@@ -28,11 +31,8 @@ class bind:
 
 
 def unbind(*args: tuple[str]) -> None:
-    existing_context = _CONTEXT.get()
-    new_context = {key: val for key, val in existing_context.items() if key not in args}
-    _CONTEXT.set(new_context)
+    set_context({key: val for key, val in _CONTEXT.get().items() if key not in args})
 
 
 def unbind_all() -> None:
-    default_context = _DEFAULT_CONTEXT_VALUE_FACTORY()
-    _CONTEXT.set(default_context)
+    set_context(_DEFAULT_CONTEXT_VALUE_FACTORY())
