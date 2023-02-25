@@ -116,6 +116,7 @@ class ConfigOption:
         self._encoded_value = maybe_encoded_value
 
     def hardcode_value(self, value: "_config_value_types.ConfigValueType") -> None:
+        self.hardcoded = False
         self.value = value
         self.hardcoded = True
 
