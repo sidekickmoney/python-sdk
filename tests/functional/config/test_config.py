@@ -45,27 +45,25 @@ def test_config() -> None:
         UNVALIDATED_DICT: config.UnvalidatedDict = config.Option()
         BASE64_ENCODED_STRING: config.Base64EncodedString = config.Option()
         PATH: pathlib.Path = config.Option()
-        LIST_OF_STRS: typing.List[str] = config.Option()
-        LIST_OF_INTS: typing.List[int] = config.Option()
-        LIST_OF_FLOATS: typing.List[float] = config.Option()
-        LIST_OF_BASE64_ENCODED_STRINGS: typing.List[config.Base64EncodedString] = config.Option()
-        LIST_OF_PATHS: typing.List[pathlib.Path] = config.Option()
+        LIST_OF_STRS: list[str] = config.Option()
+        LIST_OF_INTS: list[int] = config.Option()
+        LIST_OF_FLOATS: list[float] = config.Option()
+        LIST_OF_BASE64_ENCODED_STRINGS: list[config.Base64EncodedString] = config.Option()
+        LIST_OF_PATHS: list[pathlib.Path] = config.Option()
         OPTIONAL_STR: str | None = config.Option()
         OPTIONAL_INT: int | None = config.Option()
         OPTIONAL_FLOAT: float | None = config.Option()
         OPTIONAL_BOOL: bool | None = config.Option()
         OPTIONAL_UNVALIDATED_DICT: config.UnvalidatedDict | None = config.Option()
         OPTIONAL_BASE64_ENCODED_STRING: config.Base64EncodedString | None = config.Option()
-        OPTIONAL_LIST_OF_STRS: typing.List[str] | None = config.Option()
-        OPTIONAL_LIST_OF_INTS: typing.List[int] | None = config.Option()
-        OPTIONAL_LIST_OF_FLOATS: typing.List[float] | None = config.Option()
-        OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[
-            typing.List[config.Base64EncodedString]
-        ] = config.Option()
-        OPTIONAL_LIST_OF_PATHS: typing.List[pathlib.Path] | None = config.Option()
+        OPTIONAL_LIST_OF_STRS: list[str] | None = config.Option()
+        OPTIONAL_LIST_OF_INTS: list[int] | None = config.Option()
+        OPTIONAL_LIST_OF_FLOATS: list[float] | None = config.Option()
+        OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[list[config.Base64EncodedString]] = config.Option()
+        OPTIONAL_LIST_OF_PATHS: list[pathlib.Path] | None = config.Option()
         LITERAL: typing.Literal["ONE", "TWO"] = config.Option()
         OPTIONAL_LITERAL: typing.Literal["ONE", "TWO"] | None = config.Option()
-        OPTIONAL_LIST_OF_LITERALS: typing.List[typing.Literal["ONE", "TWO"]] | None = config.Option()
+        OPTIONAL_LIST_OF_LITERALS: list[typing.Literal["ONE", "TWO"]] | None = config.Option()
 
         # These will not be set, but have defaults, so should pick them up
         DEFAULT_STR: str = config.Option(default="test")
@@ -75,36 +73,34 @@ def test_config() -> None:
         DEFAULT_UNVALIDATED_DICT: config.UnvalidatedDict = config.Option(default={})
         DEFAULT_BASE64_ENCODED_STRING: config.Base64EncodedString = config.Option(default="dGVzdA==")
         DEFAULT_PATH: pathlib.Path = config.Option(default=pathlib.Path("/tmp"))
-        DEFAULT_LIST_OF_STRS: typing.List[str] = config.Option(default=["test", "test"])
-        DEFAULT_LIST_OF_INTS: typing.List[int] = config.Option(default=[1, 1])
-        DEFAULT_LIST_OF_FLOATS: typing.List[float] = config.Option(default=[1.5, 1.5])
-        DEFAULT_LIST_OF_BASE64_ENCODED_STRINGS: typing.List[config.Base64EncodedString] = config.Option(
+        DEFAULT_LIST_OF_STRS: list[str] = config.Option(default=["test", "test"])
+        DEFAULT_LIST_OF_INTS: list[int] = config.Option(default=[1, 1])
+        DEFAULT_LIST_OF_FLOATS: list[float] = config.Option(default=[1.5, 1.5])
+        DEFAULT_LIST_OF_BASE64_ENCODED_STRINGS: list[config.Base64EncodedString] = config.Option(
             default=[
                 "dGVzdA==",
                 "dGVzdA==",
             ]
         )
-        DEFAULT_LIST_OF_PATHS: typing.List[pathlib.Path] = config.Option(
-            default=[pathlib.Path("/tmp"), pathlib.Path("/opt")]
-        )
+        DEFAULT_LIST_OF_PATHS: list[pathlib.Path] = config.Option(default=[pathlib.Path("/tmp"), pathlib.Path("/opt")])
         DEFAULT_OPTIONAL_STR: str | None = config.Option(default="test")
         DEFAULT_OPTIONAL_INT: int | None = config.Option(default=1)
         DEFAULT_OPTIONAL_FLOAT: float | None = config.Option(default=1.5)
         DEFAULT_OPTIONAL_BOOL: bool | None = config.Option(default=True)
         DEFAULT_OPTIONAL_UNVALIDATED_DICT: config.UnvalidatedDict | None = config.Option(default={})
         DEFAULT_OPTIONAL_BASE64_ENCODED_STRING: config.Base64EncodedString | None = config.Option(default="dGVzdA==")
-        DEFAULT_OPTIONAL_LIST_OF_STRS: typing.List[str] | None = config.Option(default=["test", "test"])
-        DEFAULT_OPTIONAL_LIST_OF_INTS: typing.List[int] | None = config.Option(default=[1, 1])
-        DEFAULT_OPTIONAL_LIST_OF_FLOATS: typing.List[float] | None = config.Option(default=[1.5, 1.5])
+        DEFAULT_OPTIONAL_LIST_OF_STRS: list[str] | None = config.Option(default=["test", "test"])
+        DEFAULT_OPTIONAL_LIST_OF_INTS: list[int] | None = config.Option(default=[1, 1])
+        DEFAULT_OPTIONAL_LIST_OF_FLOATS: list[float] | None = config.Option(default=[1.5, 1.5])
         DEFAULT_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[
-            typing.List[config.Base64EncodedString]
+            list[config.Base64EncodedString]
         ] = config.Option(
             default=[
                 "dGVzdA==",
                 "dGVzdA==",
             ]
         )
-        DEFAULT_OPTIONAL_LIST_OF_PATHS: typing.List[pathlib.Path] | None = config.Option(
+        DEFAULT_OPTIONAL_LIST_OF_PATHS: list[pathlib.Path] | None = config.Option(
             default=[
                 pathlib.Path("/tmp"),
                 pathlib.Path("/opt"),
@@ -112,7 +108,7 @@ def test_config() -> None:
         )
         DEFAULT_LITERAL: typing.Literal["ONE", "TWO"] = config.Option(default="ONE")
         DEFAULT_OPTIONAL_LITERAL: typing.Literal["ONE", "TWO"] | None = config.Option(default="ONE")
-        DEFAULT_OPTIONAL_LIST_OF_LITERALS: typing.List[typing.Literal["ONE", "TWO"]] | None = config.Option(
+        DEFAULT_OPTIONAL_LIST_OF_LITERALS: list[typing.Literal["ONE", "TWO"]] | None = config.Option(
             default=["ONE", "TWO"]
         )
 
@@ -124,15 +120,15 @@ def test_config() -> None:
         UNSET_OPTIONAL_UNVALIDATED_DICT: config.UnvalidatedDict | None = config.Option()
         UNSET_OPTIONAL_BASE64_ENCODED_STRING: config.Base64EncodedString | None = config.Option()
         UNSET_OPTIONAL_PATH: pathlib.Path | None = config.Option()
-        UNSET_OPTIONAL_LIST_OF_STRS: typing.List[str] | None = config.Option()
-        UNSET_OPTIONAL_LIST_OF_INTS: typing.List[int] | None = config.Option()
-        UNSET_OPTIONAL_LIST_OF_FLOATS: typing.List[float] | None = config.Option()
+        UNSET_OPTIONAL_LIST_OF_STRS: list[str] | None = config.Option()
+        UNSET_OPTIONAL_LIST_OF_INTS: list[int] | None = config.Option()
+        UNSET_OPTIONAL_LIST_OF_FLOATS: list[float] | None = config.Option()
         UNSET_OPTIONAL_LIST_OF_BASE64_ENCODED_STRINGS: typing.Optional[
-            typing.List[config.Base64EncodedString]
+            list[config.Base64EncodedString]
         ] = config.Option()
-        UNSET_OPTIONAL_LIST_OF_PATHS: typing.List[pathlib.Path] | None = config.Option()
+        UNSET_OPTIONAL_LIST_OF_PATHS: list[pathlib.Path] | None = config.Option()
         UNSET_OPTIONAL_LITERAL: typing.Literal["ONE", "TWO"] | None = config.Option()
-        UNSET_OPTIONAL_LIST_OF_LITERALS: typing.List[typing.Literal["ONE", "TWO"]] | None = config.Option()
+        UNSET_OPTIONAL_LIST_OF_LITERALS: list[typing.Literal["ONE", "TWO"]] | None = config.Option()
 
     assert Config.STR == "test"
     assert Config.INT == 1
