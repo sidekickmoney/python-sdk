@@ -36,13 +36,13 @@ jobs:
           - "3.10"
           - "3.11"
         test-type:
-          - "test-acceptance"
-          - "test-functional"
-          - "test-performance"
-          - "test-property"
-          - "test-security"
-          - "test-smoke"
-          - "test-unit"
+          - "acceptance"
+          - "functional"
+          - "performance"
+          - "property"
+          - "security"
+          - "smoke"
+          - "unit"
 
     steps:
       - name: checkout repo
@@ -64,4 +64,4 @@ jobs:
         run: scripts/setup
 
       - name: run tests
-        run: scripts/${{ matrix.test-type }}
+        run: scripts/test-${{ matrix.test-type }}
