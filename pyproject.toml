@@ -81,10 +81,6 @@ version = {file = "version"}
 strict = true
 warn_unreachable = true
 
-[[tool.mypy.overrides]]
-module = "tests.*"
-ignore_errors = true
-
 [tool.pytest.ini_options]
 # -ra adds a short summary of all test outcomes aside from passed
 # --durations 10 adds a short summary of slowest 10 tests
