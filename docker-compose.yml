@@ -6,10 +6,16 @@ services:
     image: localstack/localstack
     network_mode: bridge
     ports:
-      - "127.0.0.1:4510-4559:4510-4559"  # external service port range
-      - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
+      - "0.0.0.0:4510-4559:4510-4559"  # external service port range
+      - "0.0.0.0:4566:4566"            # LocalStack Edge Proxy
     environment:
       SERVICES: secretsmanager
     volumes:
       - "/tmp/localstack:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:4566/health"]
+      interval: "1s"
+      timeout: "5s"
+      retries: 5
+      start_period: "1s"
