@@ -104,18 +104,15 @@ def _get_string_decoder(data_type: type) -> typing.Callable[[str], _config_value
         return functools.partial(_str_to_literal, literal=data_type)
 
     # lists of primitives
-    elif data_type in [list[str], typing.List[str]]:
+    elif data_type == list[str]:
         return _str_to_list_of_strs
-    elif data_type in [list[int], typing.List[int]]:
+    elif data_type == list[int]:
         return _str_to_list_of_ints
-    elif data_type in [list[float], typing.List[float]]:
+    elif data_type == list[float]:
         return _str_to_list_of_floats
-    elif data_type in [
-        list[_config_value_types.Base64EncodedString],
-        typing.List[_config_value_types.Base64EncodedString],
-    ]:
+    elif data_type == list[_config_value_types.Base64EncodedString]:
         return _str_to_list_of_base64_encoded_strings
-    elif data_type in [list[pathlib.Path], typing.List[pathlib.Path]]:
+    elif data_type == list[pathlib.Path]:
         return _str_to_list_of_paths
     elif _is_list_of_literals(data_type=data_type):
         return functools.partial(_str_to_list_of_literals, literal=typing.get_args(data_type)[0])
