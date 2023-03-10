@@ -17,4 +17,4 @@ from python_sdk.log._log import warning as warning
 # This has to be the last import.
 # Placed anywhere else, it will cause cyclical imports.
 # When imported, the below will set up the user-configured logging system.
-from python_sdk.log._config import Log as Log  # isort:skip
+from python_sdk.log._config import LogConfig as LogConfig  # isort:skip

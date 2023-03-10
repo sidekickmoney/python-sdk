@@ -18,13 +18,13 @@ def configure_logging() -> None:
         for handler in handlers:
             logger.removeHandler(handler)
 
-    log.Log.configure_logging()
-    log.Log.set_config_value(option="LEVEL", value="DEBUG")
+    log.LogConfig.configure_logging()
+    log.LogConfig.set_config_value(option="LEVEL", value="DEBUG")
 
 
 @pytest.fixture(scope="function")
 def captured_log(capsys) -> dict[str, typing.Any]:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.info("test")
     captured_log = json.loads(capsys.readouterr().out)
     return captured_log

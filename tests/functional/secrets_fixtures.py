@@ -10,26 +10,26 @@ from python_sdk import secrets
 
 @pytest.fixture(scope="function")
 def configure_aws_sm_secrets_engine(docker_compose: None) -> None:
-    secrets.Secrets.set_config_value(option="ENGINE", value="AWS_SM")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_SECRET_KEY_ID", value="fake")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_SECRET_ACCESS_KEY", value="fake")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_SESSION_TOKEN", value="fake")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_REGION_NAME", value="eu-west-1")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_USE_SSL", value=False)
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_VERIFY", value=False)
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_SM_ENDPOINT_URL", value="http://localhost:4566")
+    secrets.SecretsConfig.set_config_value(option="ENGINE", value="AWS_SM")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_SECRET_KEY_ID", value="fake")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_SECRET_ACCESS_KEY", value="fake")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_SESSION_TOKEN", value="fake")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_REGION_NAME", value="eu-west-1")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_USE_SSL", value=False)
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_VERIFY", value=False)
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_SM_ENDPOINT_URL", value="http://localhost:4566")
 
 
 @pytest.fixture(scope="function")
 def configure_aws_ps_secrets_engine(docker_compose: None) -> None:
-    secrets.Secrets.set_config_value(option="ENGINE", value="AWS_PS")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_SECRET_KEY_ID", value="fake")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_SECRET_ACCESS_KEY", value="fake")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_SESSION_TOKEN", value="fake")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_REGION_NAME", value="eu-west-1")
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_USE_SSL", value=False)
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_VERIFY", value=False)
-    secrets.Secrets.set_config_value(option="ENGINE_AWS_PS_ENDPOINT_URL", value="http://localhost:4566")
+    secrets.SecretsConfig.set_config_value(option="ENGINE", value="AWS_PS")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_SECRET_KEY_ID", value="fake")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_SECRET_ACCESS_KEY", value="fake")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_SESSION_TOKEN", value="fake")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_REGION_NAME", value="eu-west-1")
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_USE_SSL", value=False)
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_VERIFY", value=False)
+    secrets.SecretsConfig.set_config_value(option="ENGINE_AWS_PS_ENDPOINT_URL", value="http://localhost:4566")
 
 
 @pytest.fixture(scope="function")

@@ -10,7 +10,7 @@ from python_sdk.log import _context
 
 
 def test_bound_context_present_in_logs(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123")
     log.info("test")
@@ -19,7 +19,7 @@ def test_bound_context_present_in_logs(capsys: pytest.CaptureFixture) -> None:
 
 
 def test_bound_context_present_in_logs_when_bind_used_as_context_manager(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     with log.bind(user_id="123"):
         log.info("test")
@@ -28,7 +28,7 @@ def test_bound_context_present_in_logs_when_bind_used_as_context_manager(capsys:
 
 
 def test_bind_can_bind_multiple_values_at_once(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     with log.bind(user_id="123", user_name="test"):
         log.info("test")
@@ -38,7 +38,7 @@ def test_bind_can_bind_multiple_values_at_once(capsys: pytest.CaptureFixture) ->
 
 
 def test_bind_automatically_unbinds_when_used_as_a_context_manager(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     with log.bind(user_id="123"):
         pass
@@ -50,7 +50,7 @@ def test_bind_automatically_unbinds_when_used_as_a_context_manager(capsys: pytes
 def test_bind_when_used_as_a_context_manager_does_not_unbdind_values_that_it_did_not_bind(
     capsys: pytest.CaptureFixture,
 ) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_name="test")
     with log.bind(user_id="123"):
@@ -61,7 +61,7 @@ def test_bind_when_used_as_a_context_manager_does_not_unbdind_values_that_it_did
 
 
 def test_unbind_unbinds_bound_value(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123")
     log.unbind("user_id")
@@ -71,7 +71,7 @@ def test_unbind_unbinds_bound_value(capsys: pytest.CaptureFixture) -> None:
 
 
 def test_unbind_unbinds_multiple_bound_value(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123", user_name="test")
     log.unbind("user_id", "user_name")
@@ -82,7 +82,7 @@ def test_unbind_unbinds_multiple_bound_value(capsys: pytest.CaptureFixture) -> N
 
 
 def test_unbind_does_not_unbding_more_values_than_asked(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123", user_name="test")
     log.unbind("user_id")
@@ -92,7 +92,7 @@ def test_unbind_does_not_unbding_more_values_than_asked(capsys: pytest.CaptureFi
 
 
 def test_unbind_all_unbinds_all_bound_values(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123", user_name="123")
     log.unbind_all()
@@ -103,7 +103,7 @@ def test_unbind_all_unbinds_all_bound_values(capsys: pytest.CaptureFixture) -> N
 
 
 def test_bind_overwrites_matching_keys(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     with log.bind(user_id="123"):
         log.bind(user_id="456")
@@ -113,7 +113,7 @@ def test_bind_overwrites_matching_keys(capsys: pytest.CaptureFixture) -> None:
 
 
 def test_log_overwrites_matching_keys(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     with log.bind(user_id="123"):
         log.info("test", user_id="456")
@@ -122,7 +122,7 @@ def test_log_overwrites_matching_keys(capsys: pytest.CaptureFixture) -> None:
 
 
 def test_new_bindings_inside_bind_context_are_preserved_after_context_exit(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     with log.bind(user_id="123"):
         log.bind(user_name="test")
@@ -132,7 +132,7 @@ def test_new_bindings_inside_bind_context_are_preserved_after_context_exit(capsy
 
 
 def test_bound_values_are_thread_local(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123")
 
@@ -156,7 +156,7 @@ def test_bound_values_are_thread_local(capsys: pytest.CaptureFixture) -> None:
 
 
 def test_bound_values_are_async_local(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.bind(user_id="123")
 
@@ -173,6 +173,6 @@ def test_bound_values_are_async_local(capsys: pytest.CaptureFixture) -> None:
 
 
 def test_unbinding_keys_that_are_not_bound_is_noop(capsys: pytest.CaptureFixture) -> None:
-    log.Log.configure_logging()
+    log.LogConfig.configure_logging()
     log.unbind_all()
     log.unbind("test")
