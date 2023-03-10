@@ -31,7 +31,7 @@ class ConfigSource(typing.Protocol):
         ...
 
 
-class StaticDictionary(ConfigSource):
+class StaticDictionary:
     name: str = "Static Dictionary"
     description: str = "Sources configuration from a static dictionary."
     dictionary: dict[str, str]
@@ -43,7 +43,7 @@ class StaticDictionary(ConfigSource):
         return {key: val for key, val in self.dictionary.items() if key.lower().startswith(prefix.lower())}
 
 
-class EnvironmentVariables(ConfigSource):
+class EnvironmentVariables:
     name: str = "Environment Variables"
     description: str = "Sources configuration from the environment variables."
 
@@ -51,7 +51,7 @@ class EnvironmentVariables(ConfigSource):
         return StaticDictionary(dictionary=dict(os.environ))(prefix=prefix)
 
 
-class FileObject(ConfigSource):
+class FileObject:
     name: str = "File Object"
     description: str = """
     Sources configuration from a given file object.
@@ -87,7 +87,7 @@ class FileObject(ConfigSource):
         return StaticDictionary(dictionary=dict(os.environ))(prefix=prefix)
 
 
-class LocalFile(ConfigSource):
+class LocalFile:
     name: str = "Local File"
     description: str = """
     Sources configuration from a given local file.
@@ -117,7 +117,7 @@ class LocalFile(ConfigSource):
             return FileObject(file=f)(prefix=prefix)
 
 
-class S3File(ConfigSource):
+class S3File:
     name: str = "S3 File"
     description: str = """
     Sources configuration from an S3 (Simple Storage Service) compatible API.
@@ -141,7 +141,7 @@ class S3File(ConfigSource):
         return {}
 
 
-class AWSSecretsManagerSecret(ConfigSource):
+class AWSSecretsManagerSecret:
     name: str = "AWS Secrets Manager secret"
     description: str = """
     Sources configuration from an AWS Secrets Manager secret.
@@ -165,7 +165,7 @@ class AWSSecretsManagerSecret(ConfigSource):
         return {}
 
 
-class AWSParameterStoreDocument(ConfigSource):
+class AWSParameterStoreDocument:
     name: str = "AWS Parameter Store document"
     description: str = """
     Sources configuration from an AWS Parameter Store document.
@@ -189,7 +189,7 @@ class AWSParameterStoreDocument(ConfigSource):
         return {}
 
 
-class RemoteHTTPFile(ConfigSource):
+class RemoteHTTPFile:
     name: str = "Remote HTTP File"
     description: str = """
     Sources configuration from a remote HTTP server at a given URL.
