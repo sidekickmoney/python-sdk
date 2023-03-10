@@ -29,7 +29,7 @@ class ConfigValueValidator(typing.Protocol):
         ...
 
 
-class EnsureFileExists(ConfigValueValidator):
+class EnsureFileExists:
     name: str = "Ensure File Exists"
     description: str = "Validates that the file at a given path exists."
 
@@ -49,7 +49,7 @@ class EnsureFileExists(ConfigValueValidator):
             raise ConfigValueValidationError(f"{config_value} not a file.")
 
 
-class EnsureDirectoryExists(ConfigValueValidator):
+class EnsureDirectoryExists:
     name: str = "Ensure Directory Exists"
     description: str = "Validates that the directory at a given path exists."
 
@@ -69,7 +69,7 @@ class EnsureDirectoryExists(ConfigValueValidator):
             raise ConfigValueValidationError(f"{config_value} not a directory.")
 
 
-class EnsurePathIsReadable(ConfigValueValidator):
+class EnsurePathIsReadable:
     name: str = "Ensure Path is Readable"
     description: str = "Validates that a given path is readable."
 
@@ -87,7 +87,7 @@ class EnsurePathIsReadable(ConfigValueValidator):
             raise ConfigValueValidationError(f"{config_value} is not readable.")
 
 
-class EnsurePathIsWritable(ConfigValueValidator):
+class EnsurePathIsWritable:
     name: str = "Ensure Path is Writable"
     description: str = "Validates that a given path is writeable."
 
@@ -105,7 +105,7 @@ class EnsurePathIsWritable(ConfigValueValidator):
             raise ConfigValueValidationError(f"{config_value} is not writeable")
 
 
-class EnsurePathIsExecutable(ConfigValueValidator):
+class EnsurePathIsExecutable:
     name: str = "Ensure Path is Executable"
     description: str = "Validates that a given path is executable."
 
@@ -125,7 +125,7 @@ class EnsurePathIsExecutable(ConfigValueValidator):
             raise ConfigValueValidationError(f"{config_value} is not executable")
 
 
-class EnsureFileType(ConfigValueValidator):
+class EnsureFileType:
     name: str = "Ensure File Type"
     description: str = "Validates that the file at a given path is of set file type."
 
