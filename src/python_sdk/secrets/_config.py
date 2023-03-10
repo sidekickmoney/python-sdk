@@ -8,7 +8,7 @@ from python_sdk.secrets import _secrets_engine
 
 # TODO(lijok): something to prevent this from being configured using secrets
 # TODO(lijok): extract ENGINE_AWS_SM_BOTOCORE_CONFIG to top level
-class Secrets(config.Config, option_prefix="PYTHON_SDK_SECRETS_"):
+class SecretsConfig(config.Config, option_prefix="PYTHON_SDK_SECRETS_"):
     ENGINE: typing.Literal["AWS_SM", "AWS_PS"] = config.Option(default="AWS_SM")
 
     ENGINE_AWS_SM_SECRET_KEY_ID: str | None = config.Option()

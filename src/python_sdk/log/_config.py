@@ -8,7 +8,7 @@ from python_sdk import config
 from python_sdk.log import _formatters
 
 
-class Log(config.Config, option_prefix="PYTHON_SDK_LOG_"):
+class LogConfig(config.Config, option_prefix="PYTHON_SDK_LOG_"):
     LEVEL: typing.Literal["DEBUG", "INFO", "SECURITY", "AUDIT", "WARNING", "ERROR", "CRITICAL"] = config.Option(
         default="INFO"
     )
