@@ -9,11 +9,6 @@ import typing
 from python_sdk import utils
 
 
-class Stringable(typing.Protocol):
-    def __str__(self) -> str:
-        ...
-
-
 @dataclasses.dataclass
 class BinaryNotInstalled(FileNotFoundError):
     binary: str
@@ -32,7 +27,7 @@ class CalledProcessError(Exception):
 
 
 def call(
-    *args: Stringable,
+    *args: typing.Any,
     binary: str | pathlib.Path,
     sudo: bool = False,
     sudo_binary: str = "sudo",
