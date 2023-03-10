@@ -165,8 +165,11 @@ class Config(metaclass=_ConfigMetaclass):
                     f"Required config option {config_option.fully_qualified_name} with no default was not set."
                 )
 
-        for unused_config_option in config_data:
-            logging.warning(f"Config option {unused_config_option} not supported by {cls.meta.name}.")
+        if (
+            cls.meta.option_prefix
+        ):  # If no option_prefix, all env vars would be pulled in, and we would warn for each one.
+            for unused_config_option in config_data:
+                logging.warning(f"Config option {unused_config_option} not supported by {cls.meta.name}.")
 
         cls.meta.loaded = True
         cls.validate()
