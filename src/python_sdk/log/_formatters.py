@@ -4,12 +4,13 @@ import io
 import json
 import logging
 import traceback
+import types
 import typing
 
 import python_sdk
 
 
-class StructuredLogFormatter:
+class StructuredLogFormatter(logging.Formatter):
     include_current_log_filename: bool
     include_function_name: bool
     include_line_number: bool
@@ -34,6 +35,8 @@ class StructuredLogFormatter:
         include_thread_name: bool = True,
         include_python_sdk_version: bool = True,
     ) -> None:
+        super().__init__()
+
         self.include_current_log_filename = include_current_log_filename
         self.include_function_name = include_function_name
         self.include_line_number = include_line_number
@@ -45,7 +48,7 @@ class StructuredLogFormatter:
         self.include_thread_name = include_thread_name
         self.include_python_sdk_version = include_python_sdk_version
 
-    def format(self, record: logging.LogRecord) -> dict[str, typing.Any]:
+    def pre_format(self, record: logging.LogRecord) -> dict[str, typing.Any]:
         timestamp = datetime.datetime.fromtimestamp(record.created).replace(tzinfo=datetime.timezone.utc)
 
         message = record.msg
@@ -53,9 +56,7 @@ class StructuredLogFormatter:
             message = record.msg % record.args
         message, embedded_context = self._yank_embedded_context_from_message(message=message)
 
-        if not hasattr(record, "context"):
-            record.context = {}
-        record.context |= embedded_context
+        setattr(record, "context", getattr(record, "context", {}) | embedded_context)
 
         data = {"log_level": record.levelname, "message": message, "timestamp": timestamp}
         if self.include_current_log_filename:
@@ -97,8 +98,13 @@ class StructuredLogFormatter:
 
         return data
 
+    def format(self, record: logging.LogRecord) -> str:
+        return json.dumps(self.pre_format(record=record), default=str)
+
     # taken from logging.Formatter.formatException
-    def format_exception(self, ei) -> str:
+    def format_exception(
+        self, ei: tuple[type[BaseException], BaseException, types.TracebackType | None] | tuple[None, None, None]
+    ) -> str:
         """
         Format and return the specified exception information as a string.
 
@@ -129,11 +135,10 @@ class StructuredLogFormatter:
         # The resulting message will be:
         # User logged in. user_id=123 user_name='test'
 
-        new_message: str = message
         embedded_context: dict[str, typing.Any] = {}
 
         if "=" not in message:
-            return new_message, embedded_context
+            return message, embedded_context
 
         tokenized_message = message.split()
         for word in reversed(copy.copy(tokenized_message)):
@@ -154,13 +159,13 @@ class StructuredLogFormatter:
 
 class StructuredLogMachineReadableFormatter(StructuredLogFormatter):
     def format(self, record: logging.LogRecord) -> str:
-        data = super().format(record=record)
+        data = super().pre_format(record=record)
         return json.dumps(data, default=str)
 
 
 class StructuredLogHumanReadableFormatter(StructuredLogFormatter):
     def format(self, record: logging.LogRecord) -> str:
-        data = super().format(record=record)
+        data = super().pre_format(record=record)
         padding = max(60 - len(data["message"]), 0)
         text = f"{data['timestamp']} [{data['log_level']}\t] {data['message']} {' ' * padding}"
         for key, val in data.items():

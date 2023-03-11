@@ -1,5 +1,6 @@
 import logging
 import sys
+import types
 import typing
 
 from python_sdk.log import _context
@@ -9,9 +10,12 @@ from python_sdk.log import _log_levels
 def _log(
     level: int,
     message: typing.Any,
-    exception: BaseException | bool | None = None,
+    exception: BaseException
+    | tuple[type[BaseException], BaseException, types.TracebackType]
+    | tuple[None, None, None]
+    | None = None,
     _stack_level: int = 2,
-    **kwargs: dict[str, typing.Any],
+    **kwargs: typing.Any,
 ) -> None:
     root_logger = logging.getLogger()
 
