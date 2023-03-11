@@ -1,10 +1,9 @@
-import contextlib
 import json
 import logging
 import typing
 
-import boto3
-import botocore.exceptions
+import boto3  # type: ignore
+import botocore.exceptions  # type: ignore
 
 from python_sdk.secrets import _exceptions
 from python_sdk.secrets import _secrets_engine
@@ -12,7 +11,7 @@ from python_sdk.secrets import _secrets_engine
 
 # Boto3 does not have types, so we have to make our own.
 class AWSParameterStoreClient(typing.Protocol):
-    def get_parameter(self, **kwargs: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    def get_parameter(self, **kwargs: typing.Any) -> dict[str, typing.Any]:
         ...
 
 
@@ -57,11 +56,15 @@ class AWSParameterStore(_secrets_engine.SecretsEngine):
 
         # TODO: should we be supporting StringList's here?
         # What are the implications for config with secret references?
-        value = response["Parameter"]["Value"]
-        if response["Parameter"]["Type"] == "StringList":
-            value = value.split(",")
-        else:
-            with contextlib.suppress(json.JSONDecodeError):
-                value = json.loads(value)
+        unprocessed_value: str = response["Parameter"]["Value"]
+        processed_value: _secrets_engine.SecretValue
 
-        return value
+        if response["Parameter"]["Type"] == "StringList":
+            processed_value = unprocessed_value.split(",")
+        else:
+            try:
+                processed_value = json.loads(unprocessed_value)
+            except json.JSONDecodeError:
+                processed_value = unprocessed_value
+
+        return processed_value

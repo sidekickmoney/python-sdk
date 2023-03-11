@@ -37,30 +37,18 @@ class Base64EncodedString(str):
 
 
 # TODO: This does not include literals
-# TODO: Use 3.10 notation
-ConfigValueType: typing.TypeAlias = typing.Union[
-    str,
-    int,
-    float,
-    bool,
-    UnvalidatedDict,
-    Base64EncodedString,
-    pathlib.Path,
-    list[str],
-    list[int],
-    list[float],
-    list[Base64EncodedString],
-    list[pathlib.Path],
-    str | None,
-    int | None,
-    float | None,
-    bool | None,
-    UnvalidatedDict | None,
-    Base64EncodedString | None,
-    pathlib.Path | None,
-    list[str] | None,
-    list[int] | None,
-    list[float] | None,
-    list[Base64EncodedString] | None,
-    list[pathlib.Path] | None,
-]
+ConfigValueType: typing.TypeAlias = (
+    str
+    | int
+    | float
+    | bool
+    | UnvalidatedDict
+    | Base64EncodedString
+    | pathlib.Path
+    | list[str]
+    | list[int]
+    | list[float]
+    | list[Base64EncodedString]
+    | list[pathlib.Path]
+    | None
+)

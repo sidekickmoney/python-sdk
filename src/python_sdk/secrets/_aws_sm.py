@@ -1,10 +1,9 @@
-import contextlib
 import json
 import logging
 import typing
 
-import boto3
-import botocore.exceptions
+import boto3  # type: ignore
+import botocore.exceptions  # type: ignore
 
 from python_sdk.secrets import _exceptions
 from python_sdk.secrets import _secrets_engine
@@ -12,7 +11,7 @@ from python_sdk.secrets import _secrets_engine
 
 # Boto3 does not have types, so we have to make our own.
 class AWSSecretsManagerClient(typing.Protocol):
-    def get_secret_value(self, **kwargs: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    def get_secret_value(self, **kwargs: typing.Any) -> dict[str, typing.Any]:
         ...
 
 
@@ -55,12 +54,16 @@ class AWSSecretsManager(_secrets_engine.SecretsEngine):
                 raise _exceptions.Unauthorized(e.response["Error"]["Message"]) from e
             raise
 
+        unprocessed_secret: str
         if "SecretBinary" in response:
-            secret = response["SecretBinary"].decode("utf-8")
+            unprocessed_secret = response["SecretBinary"].decode("utf-8")
         else:
-            secret = response["SecretString"]
+            unprocessed_secret = response["SecretString"]
 
-        with contextlib.suppress(json.JSONDecodeError):
-            secret = json.loads(secret)
+        secret: _secrets_engine.SecretValue
+        try:
+            secret = json.loads(unprocessed_secret)
+        except json.JSONDecodeError:
+            secret = unprocessed_secret
 
         return secret

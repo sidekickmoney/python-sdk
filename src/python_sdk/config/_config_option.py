@@ -33,11 +33,11 @@ class ConfigOption:
         self,
         name: str,
         prefix: str,
-        datatype: typing.Type["_config_value_types.ConfigValueType"],
+        datatype: type["_config_value_types.ConfigValueType"],
         description: str = "",
         default: typing.Union[
             "_config_value_types.ConfigValueType",
-            typing.Callable[[], typing.Union["_config_value_types.ConfigValueType"]],
+            typing.Callable[[], "_config_value_types.ConfigValueType"],
             sentinel.Sentinel,
         ] = Unset,
         validators: list["_config_value_validators.ConfigValueValidator"] | None = None,
@@ -57,7 +57,7 @@ class ConfigOption:
         if not _string_decoder.type_is_supported(data_type=self._real_datatype):
             raise ValueError(f"{self.datatype} not supported.")
 
-        if self.default is not Unset and self.default is not None:
+        if self.has_default and self.default is not None:
             self._run_validators(config_value=self.default)
 
     @property
@@ -74,9 +74,11 @@ class ConfigOption:
 
     @property
     def _real_datatype(self) -> type:
-        if not _optional_type.is_optional_type(data_type=self.datatype):
-            return self.datatype
-        return [type_ for type_ in typing.get_args(self.datatype) if type_ is not types.NoneType][0]
+        return (
+            _optional_type.get_type_in_optional_type(data_type=self.datatype)
+            if _optional_type.is_optional_type(data_type=self.datatype)
+            else self.datatype
+        )
 
     @property
     def value(self) -> "_config_value_types.ConfigValueType":
@@ -125,7 +127,7 @@ class ConfigOption:
             validator(config_option_name=self.name, config_option=self, config_value=config_value)
 
 
-class PartialConfigOption(functools.partial):
+class PartialConfigOption(functools.partial[ConfigOption]):
     ...
 
 

@@ -94,7 +94,7 @@ class Config(metaclass=_ConfigMetaclass):
         name: str = "Application Configuration",
         description: str = "",
         option_prefix: str = "",
-        config_sources: list["_config_sources.ConfigSource"] = None,
+        config_sources: list["_config_sources.ConfigSource"] | None = None,
         lazy_load_config: bool = False,
         validators: list["_config_validators.ConfigValidator"] | None = None,  # TODO: this or function
     ) -> None:
@@ -130,7 +130,7 @@ class Config(metaclass=_ConfigMetaclass):
             name=name,
             description=description,
             option_prefix=option_prefix,
-            config_sources=config_sources if config_sources else _get_config_sources(),
+            config_sources=config_sources or _get_config_sources(),
             lazy_load_config=lazy_load_config,
             validators=validators or [],
         )
@@ -144,7 +144,7 @@ class Config(metaclass=_ConfigMetaclass):
 
     @classmethod
     def _load_config(cls) -> None:
-        config_data = {}
+        config_data: dict[str, str] = {}
         for config_source in reversed(cls.meta.config_sources):
             # Start sourcing config data from provided config sources, backwards.
             # Top of the list in cls.meta.config_sources takes precedence.
@@ -200,7 +200,8 @@ class Config(metaclass=_ConfigMetaclass):
 
     @classmethod
     def get_config_option(cls, option: str) -> _config_option.ConfigOption:
-        return object.__getattribute__(cls, option)
+        config_option: _config_option.ConfigOption = object.__getattribute__(cls, option)
+        return config_option
 
     @classmethod
     def set_config_value(cls, option: str, value: _config_value_types.ConfigValueType) -> None:
@@ -269,7 +270,7 @@ class ConfigSourcesConfig(
             )
         if cls.SOURCE == "REMOTE_HTTP_FILE" and not cls.SOURCE_REMOTE_HTTP_FILE_URL:
             raise _config_validators.ConfigValidationError(
-                "PYTHON_SDK_CONFIG_SOURCE_REMOTE_HTTP_FILE_URL must be set when PYTOHN_SDK_CONFIG_SOURCE is "
+                "PYTHON_SDK_CONFIG_SOURCE_REMOTE_HTTP_FILE_URL must be set when PYTHON_SDK_CONFIG_SOURCE is "
                 "REMOTE_HTTP_FILE."
             )
 
@@ -278,8 +279,10 @@ def _get_config_sources() -> list["_config_sources.ConfigSource"]:
     if ConfigSourcesConfig.SOURCE == "ENVIRONMENT_VARIABLES":
         return [_config_sources.EnvironmentVariables()]
     elif ConfigSourcesConfig.SOURCE == "LOCAL_FILE":
+        assert ConfigSourcesConfig.SOURCE_LOCAL_FILE_FILEPATH is not None
         return [_config_sources.LocalFile(filepath=ConfigSourcesConfig.SOURCE_LOCAL_FILE_FILEPATH)]
     elif ConfigSourcesConfig.SOURCE == "REMOTE_HTTP_FILE":
+        assert ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_URL is not None
         return [
             _config_sources.RemoteHTTPFile(
                 url=ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_URL,
@@ -288,3 +291,4 @@ def _get_config_sources() -> list["_config_sources.ConfigSource"]:
                 user_agent_string=ConfigSourcesConfig.SOURCE_REMOTE_HTTP_FILE_USER_AGENT_STRING,
             )
         ]
+    raise NotImplementedError()

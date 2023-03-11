@@ -47,9 +47,7 @@ class LogConfig(config.Config, option_prefix="PYTHON_SDK_LOG_"):
         logger.addHandler(hdlr=cls.handler())
 
     @classmethod
-    def formatter(
-        cls,
-    ) -> _formatters.StructuredLogHumanReadableFormatter | _formatters.StructuredLogMachineReadableFormatter:
+    def formatter(cls) -> _formatters.StructuredLogFormatter:
         formatters = {
             "HUMAN_READABLE": _formatters.StructuredLogHumanReadableFormatter,
             "MACHINE_READABLE": _formatters.StructuredLogMachineReadableFormatter,
@@ -69,7 +67,9 @@ class LogConfig(config.Config, option_prefix="PYTHON_SDK_LOG_"):
         )
 
     @classmethod
-    def handler(cls) -> logging.StreamHandler | logging.handlers.RotatingFileHandler | logging.handlers.QueueHandler:
+    def handler(cls) -> logging.Handler:
+        handler: logging.Handler
+
         if cls.DESTINATION == "STDOUT":
             handler = logging.StreamHandler(stream=sys.stdout)
             handler.setFormatter(fmt=cls.formatter())
@@ -77,6 +77,7 @@ class LogConfig(config.Config, option_prefix="PYTHON_SDK_LOG_"):
             handler = logging.StreamHandler(stream=sys.stderr)
             handler.setFormatter(fmt=cls.formatter())
         elif cls.DESTINATION == "ROTATING_FILE":
+            assert cls.DESTINATION_ROTATING_FILE_PATH is not None
             rotating_file_handler = logging.handlers.RotatingFileHandler(
                 filename=cls.DESTINATION_ROTATING_FILE_PATH,
                 maxBytes=cls.DESTINATION_ROTATING_FILE_MAX_SIZE_BYTES,
@@ -84,7 +85,7 @@ class LogConfig(config.Config, option_prefix="PYTHON_SDK_LOG_"):
                 encoding="utf-8",
             )
             rotating_file_handler.setFormatter(fmt=cls.formatter())
-            queue = multiprocessing.Queue(-1)
+            queue: multiprocessing.Queue[logging.LogRecord] = multiprocessing.Queue(-1)
             handler = logging.handlers.QueueHandler(queue=queue)
             queue_listener = logging.handlers.QueueListener(queue, rotating_file_handler, respect_handler_level=True)
             queue_listener.start()

@@ -141,6 +141,8 @@ def type_is_supported(data_type: type) -> bool:
         return False
 
 
-def decode_string(string: str, data_type: _T) -> _T:
+def decode_string(
+    string: str, data_type: type[_config_value_types.ConfigValueType]
+) -> _config_value_types.ConfigValueType:
     decoder = _get_string_decoder(data_type=data_type)
     return decoder(string)

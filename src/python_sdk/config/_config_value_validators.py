@@ -1,4 +1,5 @@
 import os
+import pathlib
 import typing
 
 if typing.TYPE_CHECKING:
@@ -20,7 +21,7 @@ class ConfigValueValidator(typing.Protocol):
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: typing.Any,
     ) -> None:
         """
         Raises:
@@ -37,7 +38,7 @@ class EnsureFileExists:
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: pathlib.Path,
     ) -> None:
         """
         Raises:
@@ -57,7 +58,7 @@ class EnsureDirectoryExists:
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: pathlib.Path,
     ) -> None:
         """
         Raises:
@@ -77,7 +78,7 @@ class EnsurePathIsReadable:
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: pathlib.Path,
     ) -> None:
         """
         Raises:
@@ -95,7 +96,7 @@ class EnsurePathIsWritable:
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: pathlib.Path,
     ) -> None:
         """
         Raises:
@@ -113,7 +114,7 @@ class EnsurePathIsExecutable:
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: pathlib.Path,
     ) -> None:
         """
         Raises:
@@ -136,7 +137,7 @@ class EnsureFileType:
         self,
         config_option_name: str,
         config_option: "_config_option.ConfigOption",
-        config_value: "_config_value_types.ConfigValueType",
+        config_value: pathlib.Path,
     ) -> None:
         """
         Raises:

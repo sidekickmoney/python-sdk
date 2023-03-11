@@ -21,9 +21,13 @@ def version_file_based() -> str:
             )
 
     calling_module_frame = inspect.stack()[1]
-    calling_module = pathlib.Path(inspect.getmodule(calling_module_frame[0]).__file__)
+    calling_module_name = calling_module_frame[0]
+    calling_module = inspect.getmodule(calling_module_name)
+    if not calling_module or not calling_module.__file__:
+        raise ModuleNotFoundError("Could not discover calling module.")
+    calling_module_file = pathlib.Path(calling_module.__file__)
 
-    current_dir = calling_module.parent
+    current_dir = calling_module_file.parent
     checked = []
     while True:
         currently_checking = current_dir / _VERSION_FILE_NAME
