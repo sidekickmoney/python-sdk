@@ -42,7 +42,7 @@ ConfigValueType: typing.TypeAlias = (
     | int
     | float
     | bool
-    | UnvalidatedDict
+    | UnvalidatedDict  # TODO: replace with standard dict
     | Base64EncodedString
     | pathlib.Path
     | list[str]
