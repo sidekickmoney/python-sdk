@@ -90,3 +90,17 @@ def test_config_value_when_set_is_retrieved_and_converted_correctly(
         {"__annotations__": {"TEST_KEY": data_type}, "TEST_KEY": config.Option()},
     )
     assert getattr(cls, "TEST_KEY") == expected_value
+
+
+def test_options_support_lambda_defaults() -> None:
+    class Config(config.Config):
+        TEST_KEY: pathlib.Path = config.Option(default=lambda: pathlib.Path("/var"))
+
+    assert Config.TEST_KEY == pathlib.Path("/var")
+
+
+def test_options_support_callable_defaults() -> None:
+    class Config(config.Config):
+        TEST_KEY: config.UnvalidatedDict = config.Option(default=config.UnvalidatedDict)
+
+    assert Config.TEST_KEY == {}
