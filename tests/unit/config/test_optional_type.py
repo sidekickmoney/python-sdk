@@ -22,5 +22,5 @@ from python_sdk.config import _optional_type
         (typing.Union[str, int, None], False),
     ],
 )
-def test_is_optional_type(data_type: typing.Type, expected_result: bool) -> None:
+def test_is_optional_type(data_type: type, expected_result: bool) -> None:
     assert _optional_type.is_optional_type(data_type=data_type) is expected_result

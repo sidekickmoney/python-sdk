@@ -9,14 +9,12 @@ from python_sdk.config import _string_decoder
 # TODO(lijok): replace as many of these as we can with property tests
 
 
-def string_decodes_to_expected_result(
-    string: str, data_type: config.ConfigValueType, expected_result: config.ConfigValueType | ValueError
-) -> bool:
+def string_decodes_to_expected_result(string: str, data_type: type[typing.Any], expected_result: typing.Any) -> bool:
     try:
         result = _string_decoder.decode_string(string=string, data_type=data_type)
-        return result == expected_result
-    except ValueError:
-        return ValueError is expected_result
+        return bool(result == expected_result)
+    except Exception as e:
+        return e.__class__ is expected_result
 
 
 @pytest.mark.parametrize(

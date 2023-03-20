@@ -16,15 +16,14 @@ def configure_logging() -> None:
     for logger in loggers:
         handlers = getattr(logger, "handlers", [])
         for handler in handlers:
-            logger.removeHandler(handler)
+            logger.removeHandler(handler)  # type: ignore
 
     log.LogConfig.configure_logging()
     log.LogConfig.set_config_value(option="LEVEL", value="DEBUG")
 
 
 @pytest.fixture(scope="function")
-def captured_log(capsys) -> dict[str, typing.Any]:
+def captured_log(capsys: pytest.CaptureFixture[str]) -> dict[str, typing.Any]:
     log.LogConfig.configure_logging()
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
-    return captured_log
+    return dict(json.loads(capsys.readouterr().out))
