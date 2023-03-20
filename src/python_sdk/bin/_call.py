@@ -28,7 +28,6 @@ class CalledProcessError(Exception):
 
 def call(
     *args: typing.Any,
-    binary: str | pathlib.Path,
     sudo: bool = False,
     sudo_binary: str = "sudo",
     environment_variables: dict[str, str] | None = None,
@@ -42,13 +41,16 @@ def call(
     """
     env = environment_variables if environment_variables is not None else dict(os.environ)
 
+    binary: str = args[0]
+    arguments: typing.Any = [str(argument) for argument in args[1:]]
+
     try:
         binary_full_path = utils.which(binary)
         sudo_full_path = utils.which(sudo_binary)
     except FileNotFoundError as e:
         raise BinaryNotInstalled(binary=e.filename) from e
 
-    command = [binary_full_path] + [str(i) for i in args]
+    command: list[str | pathlib.Path] = [binary_full_path] + arguments
     if sudo:
         command.insert(0, sudo_full_path)
     if force_arch:
