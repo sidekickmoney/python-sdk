@@ -1,4 +1,5 @@
 import copy
+import inspect
 import pickle
 import unittest.mock
 
@@ -66,7 +67,7 @@ def test_sentinel_custom_repr() -> None:
 
 
 @unittest.mock.patch("inspect.currentframe")
-def test_sentinel_throws_error_if_call_stack_not_available(currentframe_mock) -> None:
+def test_sentinel_throws_error_if_call_stack_not_available(currentframe_mock: unittest.mock.Mock) -> None:
     currentframe_mock.return_value = None
 
     with pytest.raises(RuntimeError):

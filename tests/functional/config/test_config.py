@@ -8,7 +8,7 @@ from python_sdk import config
 
 
 @pytest.fixture(scope="function", autouse=True)
-def remove_test_env_vars() -> None:
+def remove_test_env_vars() -> typing.Generator[None, None, None]:
     yield
     for key in os.environ:
         if key.startswith("TEST_"):
@@ -75,7 +75,7 @@ def test_unset_optional_option_defaults_to_provided_default() -> None:
         (list[config.Base64EncodedString] | None,   "dGVzdA==,dGVzdA==", ["dGVzdA==", "dGVzdA=="]),
         (list[pathlib.Path] | None,                 "/tmp,/home",        [pathlib.Path("/tmp"), pathlib.Path("/home")]),
         (typing.Literal["ONE"],                     "ONE",               "ONE"),
-        (typing.Literal["ONE"] | None,              "ONE",               "ONE"),
+        (typing.Literal["ONE"] | None,              "ONE",               "ONE"),  # type: ignore
         (list[typing.Literal["ONE", "TWO"]] | None, "ONE,TWO",           ["ONE", "TWO"]),
     ],
 )

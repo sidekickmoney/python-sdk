@@ -6,14 +6,14 @@ import pytest
 from python_sdk import log
 
 
-def test_exception_log_outside_except_block_has_correct_message(capsys: pytest.CaptureFixture) -> None:
+def test_exception_log_outside_except_block_has_correct_message(capsys: pytest.CaptureFixture[str]) -> None:
     log.LogConfig.configure_logging()
     log.exception("test", exception=Exception("exception"))
     captured_log = json.loads(capsys.readouterr().out)
     assert captured_log["message"] == "test"
 
 
-def test_exception_log_inside_except_block_has_correct_message(capsys: pytest.CaptureFixture) -> None:
+def test_exception_log_inside_except_block_has_correct_message(capsys: pytest.CaptureFixture[str]) -> None:
     log.LogConfig.configure_logging()
     try:
         raise Exception("exception")
@@ -24,7 +24,7 @@ def test_exception_log_inside_except_block_has_correct_message(capsys: pytest.Ca
 
 
 def test_manually_passed_exception_with_no_context_outside_except_block_has_correct_exception(
-    capsys: pytest.CaptureFixture,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     log.LogConfig.configure_logging()
     log.exception("test", exception=Exception("error"))
@@ -33,7 +33,7 @@ def test_manually_passed_exception_with_no_context_outside_except_block_has_corr
 
 
 def test_manually_passed_exception_with_no_context_inside_except_block_has_correct_exception(
-    capsys: pytest.CaptureFixture,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     log.LogConfig.configure_logging()
     try:
@@ -45,7 +45,7 @@ def test_manually_passed_exception_with_no_context_inside_except_block_has_corre
 
 
 def test_manually_passed_exception_with_context_outside_except_block_has_correct_exception(
-    capsys: pytest.CaptureFixture,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     log.LogConfig.configure_logging()
     try:
@@ -58,7 +58,7 @@ def test_manually_passed_exception_with_context_outside_except_block_has_correct
 
 
 def test_manually_passed_exception_with_context_inside_except_block_has_correct_exception(
-    capsys: pytest.CaptureFixture,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     log.LogConfig.configure_logging()
     try:
@@ -75,7 +75,7 @@ def test_manually_passed_exception_with_context_inside_except_block_has_correct_
     assert captured_log["exception"].strip() == "".join(traceback.format_exception(exception)).strip()
 
 
-def test_exception_within_except_block_has_correct_exception(capsys: pytest.CaptureFixture) -> None:
+def test_exception_within_except_block_has_correct_exception(capsys: pytest.CaptureFixture[str]) -> None:
     log.LogConfig.configure_logging()
     try:
         raise Exception("error")
