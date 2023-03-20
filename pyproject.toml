@@ -23,20 +23,9 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: Implementation :: CPython",
-#    "Programming Language :: Python :: Implementation :: PyPy",  # TODO(lijok): enable this one once we add PyPy support
-    "Topic :: Security",
-    "Topic :: Security :: Cryptography",
-    "Topic :: Software Development",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: System",
-    "Topic :: System :: Logging",
-    "Topic :: System :: Monitoring",
-    "Topic :: Utilities",
-    "Typing :: Typed"
 ]
 
 [project.urls]
