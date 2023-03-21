@@ -1,4 +1,3 @@
-import functools
 import inspect
 import json
 import os
@@ -8,7 +7,6 @@ import sys
 _VERSION_FILE_NAME: str = "version"
 
 
-@functools.lru_cache(maxsize=1)
 def version_file_based() -> str:
     if hasattr(sys, "_MEIPASS"):  # running as a pyinstaller frozen application
         packaged_version_file = pathlib.Path(getattr(sys, "_MEIPASS")) / _VERSION_FILE_NAME
