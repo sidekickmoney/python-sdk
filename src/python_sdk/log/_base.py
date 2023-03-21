@@ -16,6 +16,6 @@ for _existing_handler in _logger.handlers:
     _existing_handler.close()
     _logger.removeHandler(hdlr=_existing_handler)
 
-_default_handler: logging.StreamHandler[typing.TextIO] = logging.StreamHandler(stream=sys.stdout)
+_default_handler: logging.StreamHandler = logging.StreamHandler(stream=sys.stdout)
 _default_handler.setFormatter(fmt=_formatters.StructuredLogMachineReadableFormatter())
 _logger.addHandler(hdlr=_default_handler)
