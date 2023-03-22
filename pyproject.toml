@@ -68,8 +68,10 @@ version = {file = "version"}
 
 [tool.pytest.ini_options]
 # -ra adds a short summary of all test outcomes aside from passed
+# --string-markers errors if unknown markers are used
+# --strict-config errors if any warnings are encountered in this config
 # --durations 10 adds a short summary of slowest 10 tests
 # --new-first runs tests on new files first
 # --basetemp .test_artifacts sets the path that the tmp_path fixture will store files in
-addopts = "-vv -ra --durations 10 --new-first --basetemp .test_artifacts"
+addopts = "-vv -ra --strict-markers --strict-config --durations 10 --new-first --basetemp .test_artifacts"
 asyncio_mode = "auto"
