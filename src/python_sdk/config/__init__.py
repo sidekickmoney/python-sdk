@@ -10,6 +10,7 @@ from python_sdk.config._config_sources import LocalFile as LocalFile
 from python_sdk.config._config_sources import RemoteHTTPFile as RemoteHTTPFile
 from python_sdk.config._config_sources import S3File as S3File
 from python_sdk.config._config_sources import StaticDictionary as StaticDictionary
+from python_sdk.config._config_validators import ConfigValidationError as ConfigValidationError
 from python_sdk.config._config_validators import ConfigValidator as ConfigValidator
 from python_sdk.config._config_value_types import Base64EncodedString as Base64EncodedString
 from python_sdk.config._config_value_types import ConfigValueType as ConfigValueType
