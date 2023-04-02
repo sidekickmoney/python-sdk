@@ -34,6 +34,7 @@ def call(
     stream_output: bool = False,
     stream_printer: typing.Callable[[str], None] = functools.partial(print, end="", flush=True),
     force_arch: typing.Literal["amd64", "x86_64"] | None = None,
+    stdin: typing.TextIO | None = None,
 ) -> str:
     """
     Raises:
@@ -58,7 +59,9 @@ def call(
         command.insert(1, f"-{force_arch}")
 
     logging.debug(f"Calling command. binary={binary_full_path} {command=}")
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env)
+    process = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=stdin, text=True, env=env
+    )
 
     output = ""
     for line in iter(process.stdout.readline, ""):  # type: ignore
