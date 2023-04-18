@@ -17,10 +17,11 @@ class BinaryNotInstalled(FileNotFoundError):
         return self.binary
 
 
-@dataclasses.dataclass
 class CalledProcessError(Exception):
-    output: str
-    exit_code: int
+    def __init__(self, message: str, output: str, exit_code: int) -> None:
+        super().__init__(message, output, exit_code)
+        self.output = output
+        self.exit_code = exit_code
 
     def __str__(self) -> str:
         return f"{self.exit_code}\n{self.output}"
@@ -76,6 +77,6 @@ def call(
     process.wait()
 
     if process.returncode:
-        raise CalledProcessError(output=output, exit_code=process.returncode)
+        raise CalledProcessError("Called process failure.", output=output, exit_code=process.returncode)
 
     return output.strip()
