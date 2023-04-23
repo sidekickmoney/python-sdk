@@ -7,9 +7,7 @@ source .venv/bin/activate
 VERSION=$(cat version)
 
 rm -rf dist
-mkdir -p built
 
 cp version src/python_sdk
-python -m build --wheel --outdir built
-mv "built/python_sdk-${VERSION}-py3-none-any.whl" "built/python-sdk.whl"
+python -m build --wheel
 rm src/python_sdk/version

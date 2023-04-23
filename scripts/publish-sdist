@@ -6,8 +6,4 @@ source .venv/bin/activate
 
 VERSION=$(cat version)
 
-rm -rf dist
-
-cp version src/python_sdk
-python -m build --sdist
-rm src/python_sdk/version
+twine upload -r testpypi "dist/python-sdk-${VERSION}.tar.gz"
