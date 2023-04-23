@@ -23,3 +23,11 @@ class LogConfig(config.Config, option_prefix="PYTHON_SDK_LOG_"):
     INCLUDE_THREAD_ID: bool = config.Option(default=False)
     INCLUDE_THREAD_NAME: bool = config.Option(default=False)
     INCLUDE_PYTHON_SDK_VERSION: bool = config.Option(default=False)
+
+    @classmethod
+    def configure_logging(self) -> None:
+        # TODO: Temporary hack for the test suite. Remove this.
+        from python_sdk.log import _logger
+
+        _logger._LOGGER = None
+        _logger.logger()

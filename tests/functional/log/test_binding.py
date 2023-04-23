@@ -14,7 +14,7 @@ def test_bound_context_present_in_logs(capsys: pytest.CaptureFixture[str]) -> No
     log.unbind_all()
     log.bind(user_id="123")
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["user_id"] == "123"
 
 
@@ -23,7 +23,7 @@ def test_bound_context_present_in_logs_when_bind_used_as_context_manager(capsys:
     log.unbind_all()
     with log.bind(user_id="123"):
         log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["user_id"] == "123"
 
 
@@ -32,7 +32,7 @@ def test_bind_can_bind_multiple_values_at_once(capsys: pytest.CaptureFixture[str
     log.unbind_all()
     with log.bind(user_id="123", user_name="test"):
         log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_id" in captured_log
     assert "user_name" in captured_log
 
@@ -43,7 +43,7 @@ def test_bind_automatically_unbinds_when_used_as_a_context_manager(capsys: pytes
     with log.bind(user_id="123"):
         pass
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_id" not in captured_log
 
 
@@ -56,7 +56,7 @@ def test_bind_when_used_as_a_context_manager_does_not_unbdind_values_that_it_did
     with log.bind(user_id="123"):
         pass
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_name" in captured_log
 
 
@@ -66,7 +66,7 @@ def test_unbind_unbinds_bound_value(capsys: pytest.CaptureFixture[str]) -> None:
     log.bind(user_id="123")
     log.unbind("user_id")
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_id" not in captured_log
 
 
@@ -76,7 +76,7 @@ def test_unbind_unbinds_multiple_bound_value(capsys: pytest.CaptureFixture[str])
     log.bind(user_id="123", user_name="test")
     log.unbind("user_id", "user_name")
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_id" not in captured_log
     assert "user_name" not in captured_log
 
@@ -87,7 +87,7 @@ def test_unbind_does_not_unbding_more_values_than_asked(capsys: pytest.CaptureFi
     log.bind(user_id="123", user_name="test")
     log.unbind("user_id")
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_name" in captured_log
 
 
@@ -97,7 +97,7 @@ def test_unbind_all_unbinds_all_bound_values(capsys: pytest.CaptureFixture[str])
     log.bind(user_id="123", user_name="123")
     log.unbind_all()
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_id" not in captured_log
     assert "user_name" not in captured_log
 
@@ -108,7 +108,7 @@ def test_bind_overwrites_matching_keys(capsys: pytest.CaptureFixture[str]) -> No
     with log.bind(user_id="123"):
         log.bind(user_id="456")
         log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["user_id"] == "456"
 
 
@@ -117,7 +117,7 @@ def test_log_overwrites_matching_keys(capsys: pytest.CaptureFixture[str]) -> Non
     log.unbind_all()
     with log.bind(user_id="123"):
         log.info("test", user_id="456")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["user_id"] == "456"
 
 
@@ -127,7 +127,7 @@ def test_new_bindings_inside_bind_context_are_preserved_after_context_exit(capsy
     with log.bind(user_id="123"):
         log.bind(user_name="test")
     log.info("test")
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert "user_name" in captured_log
 
 

@@ -9,7 +9,7 @@ from python_sdk import log
 def test_exception_log_outside_except_block_has_correct_message(capsys: pytest.CaptureFixture[str]) -> None:
     log.LogConfig.configure_logging()
     log.exception("test", exception=Exception("exception"))
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["message"] == "test"
 
 
@@ -19,7 +19,7 @@ def test_exception_log_inside_except_block_has_correct_message(capsys: pytest.Ca
         raise Exception("exception")
     except:
         log.exception("test", exception=Exception("exception"))
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["message"] == "test"
 
 
@@ -28,7 +28,7 @@ def test_manually_passed_exception_with_no_context_outside_except_block_has_corr
 ) -> None:
     log.LogConfig.configure_logging()
     log.exception("test", exception=Exception("error"))
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["exception"] == "Exception: error"
 
 
@@ -40,7 +40,7 @@ def test_manually_passed_exception_with_no_context_inside_except_block_has_corre
         raise Exception("exception")
     except:
         log.exception("test", exception=Exception("error"))
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["exception"] == "Exception: error"
 
 
@@ -53,7 +53,7 @@ def test_manually_passed_exception_with_context_outside_except_block_has_correct
     except Exception as e:
         exception = e
     log.exception("test", exception=exception)
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["exception"].strip() == "".join(traceback.format_exception(exception)).strip()
 
 
@@ -71,7 +71,7 @@ def test_manually_passed_exception_with_context_inside_except_block_has_correct_
     except:
         log.exception("test", exception=exception)
 
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["exception"].strip() == "".join(traceback.format_exception(exception)).strip()
 
 
@@ -82,5 +82,5 @@ def test_exception_within_except_block_has_correct_exception(capsys: pytest.Capt
     except Exception as e:
         exception = e
         log.exception("test", exception=exception)
-    captured_log = json.loads(capsys.readouterr().out)
+    captured_log = json.loads(capsys.readouterr().err)
     assert captured_log["exception"].strip() == "".join(traceback.format_exception(exception)).strip()

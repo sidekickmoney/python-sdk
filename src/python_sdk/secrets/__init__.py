@@ -1,5 +1,6 @@
 import typing
 
+from python_sdk.secrets._config import AWSSecretsEngineConfig as AWSSecretsEngineConfig
 from python_sdk.secrets._config import SecretsConfig as SecretsConfig
 from python_sdk.secrets._secrets_engine import DoesNotExist as DoesNotExist
 from python_sdk.secrets._secrets_engine import Unauthorized as Unauthorized
