@@ -4,5 +4,4 @@ set -euo pipefail
 
 source .venv/bin/activate
 
-black --line-length 120 .
-isort --line-length 120 --force-single-line-imports --force-sort-within-sections --profile black .
+python-sdk fmt

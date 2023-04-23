@@ -8,7 +8,8 @@ class TestCodeFormatting:
         assert black_is_installed, """This test requires black (black.readthedocs.io) to be installed.
 You can either:
     a. Install testing dependencies using `pip install python-sdk[testing]`
-    b. Install black directly using `pip install black`
+    b. Install cli dependencies using `pip install python-sdk[cli]`
+    c. Install black directly using `pip install black`
 """
 
         code_is_formatted: bool = subprocess.run(["black", "--line-length", "120", "--check", "."]).returncode == 0
@@ -23,7 +24,8 @@ class TestImportFormatting:
         assert isort_is_installed, """This test requires isort (pycqa.github.io/isort) to be installed.
         You can either:
             a. Install testing dependencies using `pip install python-sdk[testing]`
-            b. Install isort directly using `pip install isort`
+            b. Install cli dependencies using `pip install python-sdk[cli]`
+            c. Install isort directly using `pip install isort`
         """
 
         imports_are_formatted: bool = (
