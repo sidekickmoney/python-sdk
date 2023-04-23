@@ -218,6 +218,15 @@ class Config(metaclass=_ConfigMetaclass):
         cls.validate()
         cls.post_load_hook()
 
+    @classmethod
+    def last_loaded_at(cls) -> datetime.datetime | None:
+        return cls.meta.last_loaded_at
+
+    @classmethod
+    def last_load_contained_changes(cls) -> bool:
+        # TODO: Implement this
+        return False
+
 
 # TODO: How do we allow custom config sources if SOURCE is a literal?
 class ConfigSourcesConfig(

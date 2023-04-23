@@ -5,6 +5,7 @@ import typing
 
 from python_sdk.log import _context
 from python_sdk.log import _log_levels
+from python_sdk.log import _logger
 
 
 def _log(
@@ -17,16 +18,16 @@ def _log(
     _stack_level: int = 2,
     **kwargs: typing.Any,
 ) -> None:
-    root_logger = logging.getLogger()
+    logger = _logger.logger()
 
     # root_logger.log does this check itself.
     # However, just below this, we're doing a potentially expensive dictionary merge.
     # So, as a simple performance optimization, we run this check before we do the dictionary merge.
-    if not root_logger.isEnabledFor(level=level):
+    if not logger.isEnabledFor(level=level):
         return
 
     data = _context.get_context() | kwargs
-    root_logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
+    logger.log(level=level, msg=message, exc_info=exception, stacklevel=_stack_level, extra={"context": data})
 
 
 def critical(message: typing.Any, **kwargs: typing.Any) -> None:

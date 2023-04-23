@@ -10,7 +10,9 @@ import typing
 import python_sdk
 
 
-class StructuredLogFormatter(logging.Formatter):
+class StructuredMachineReadable:
+    TYPE: str = "STRUCTURED_MACHINE_READABLE"
+
     include_current_log_filename: bool
     include_function_name: bool
     include_line_number: bool
@@ -24,16 +26,16 @@ class StructuredLogFormatter(logging.Formatter):
 
     def __init__(
         self,
-        include_current_log_filename: bool = True,
-        include_function_name: bool = True,
-        include_line_number: bool = True,
-        include_module_name: bool = True,
-        include_module_path: bool = True,
-        include_process_id: bool = True,
-        include_process_name: bool = True,
-        include_thread_id: bool = True,
-        include_thread_name: bool = True,
-        include_python_sdk_version: bool = True,
+        include_current_log_filename: bool,
+        include_function_name: bool,
+        include_line_number: bool,
+        include_module_name: bool,
+        include_module_path: bool,
+        include_process_id: bool,
+        include_process_name: bool,
+        include_thread_id: bool,
+        include_thread_name: bool,
+        include_python_sdk_version: bool,
     ) -> None:
         super().__init__()
 
@@ -99,7 +101,8 @@ class StructuredLogFormatter(logging.Formatter):
         return data
 
     def format(self, record: logging.LogRecord) -> str:
-        return json.dumps(self.pre_format(record=record), default=str)
+        data = self.pre_format(record=record)
+        return json.dumps(data, default=str)
 
     # taken from logging.Formatter.formatException
     def format_exception(
@@ -155,20 +158,3 @@ class StructuredLogFormatter(logging.Formatter):
 
         new_message = " ".join(tokenized_message)
         return new_message, embedded_context
-
-
-class StructuredLogMachineReadableFormatter(StructuredLogFormatter):
-    def format(self, record: logging.LogRecord) -> str:
-        data = super().pre_format(record=record)
-        return json.dumps(data, default=str)
-
-
-class StructuredLogHumanReadableFormatter(StructuredLogFormatter):
-    def format(self, record: logging.LogRecord) -> str:
-        data = super().pre_format(record=record)
-        padding = max(60 - len(data["message"]), 0)
-        text = f"{data['timestamp']} [{data['log_level']}\t] {data['message']} {' ' * padding}"
-        for key, val in data.items():
-            if key not in ["timestamp", "log_level", "message"]:
-                text += f" {key}={val}"
-        return text
