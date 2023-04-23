@@ -1,5 +1,6 @@
 import base64
 import functools
+import json
 import pathlib
 import typing
 
@@ -94,8 +95,8 @@ def _get_string_decoder(data_type: type) -> typing.Callable[[str], _config_value
         return float
     elif data_type == bool:
         return _str_to_bool
-    elif data_type == _config_value_types.UnvalidatedDict:
-        return _config_value_types.UnvalidatedDict
+    elif getattr(data_type, "__origin__", None) == dict:
+        return json.loads
     elif data_type == _config_value_types.Base64EncodedString:
         return _str_to_base64_encoded_string
     elif data_type == pathlib.Path:

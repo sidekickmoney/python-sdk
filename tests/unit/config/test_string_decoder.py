@@ -111,10 +111,8 @@ def test_decode_config_value_to_bool(string: str, expected_result: config.Config
         ("", ValueError),
     ],
 )
-def test_decode_config_value_to_unvalidated_dict(
-    string: str, expected_result: config.ConfigValueType | ValueError
-) -> None:
-    data_type = config.UnvalidatedDict
+def test_decode_config_value_to_dict(string: str, expected_result: config.ConfigValueType | ValueError) -> None:
+    data_type = dict[str, typing.Any]
     assert string_decodes_to_expected_result(string=string, data_type=data_type, expected_result=expected_result)
 
 

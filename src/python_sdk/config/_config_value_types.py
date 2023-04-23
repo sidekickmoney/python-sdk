@@ -1,17 +1,6 @@
 import base64
-import json
 import pathlib
 import typing
-
-
-class UnvalidatedDict(dict[typing.Any, typing.Any]):
-    def __init__(self, string: str) -> None:
-        super().__init__()
-        data = json.loads(string.strip())
-        if not isinstance(data, dict):
-            raise ValueError()
-        for key, val in data.items():
-            self[key] = val
 
 
 class Base64EncodedString(str):
@@ -42,7 +31,6 @@ ConfigValueType: typing.TypeAlias = (
     | int
     | float
     | bool
-    | UnvalidatedDict  # TODO: replace with standard dict
     | Base64EncodedString
     | pathlib.Path
     | list[str]

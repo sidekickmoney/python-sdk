@@ -54,7 +54,7 @@ def test_unset_optional_option_defaults_to_provided_default() -> None:
         (int,                                       "1",                 1),
         (float,                                     "1.5",               1.5),
         (bool,                                      "TRUE",              True),
-        (config.UnvalidatedDict,                    "{}",                {}),
+        (dict[str, typing.Any],                    "{}",                {}),
         (config.Base64EncodedString,                "dGVzdA==",          config.Base64EncodedString("dGVzdA==")),
         (pathlib.Path,                              "/tmp",              pathlib.Path("/tmp")),
         (list[str],                                 "one,two",           ["one", "two"]),
@@ -66,7 +66,7 @@ def test_unset_optional_option_defaults_to_provided_default() -> None:
         (int | None,                                "1",                 1),
         (float | None,                              "1.5",               1.5),
         (bool | None,                               "TRUE",              True),
-        (config.UnvalidatedDict | None,             "{}",                {}),
+        (dict[str, typing.Any] | None,             "{}",                {}),
         (config.Base64EncodedString | None,         "dGVzdA==",          config.Base64EncodedString("dGVzdA==")),
         (pathlib.Path | None,                       "/tmp",              pathlib.Path("/tmp")),
         (list[str] | None,                          "one,two",           ["one", "two"]),
@@ -101,6 +101,6 @@ def test_options_support_lambda_defaults() -> None:
 
 def test_options_support_callable_defaults() -> None:
     class Config(config.Config):
-        TEST_KEY: config.UnvalidatedDict = config.Option(default=config.UnvalidatedDict)
+        TEST_KEY: dict[str, typing.Any] = config.Option(default=dict)
 
     assert Config.TEST_KEY == {}

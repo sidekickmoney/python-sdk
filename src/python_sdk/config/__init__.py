@@ -14,7 +14,6 @@ from python_sdk.config._config_validators import ConfigValidationError as Config
 from python_sdk.config._config_validators import ConfigValidator as ConfigValidator
 from python_sdk.config._config_value_types import Base64EncodedString as Base64EncodedString
 from python_sdk.config._config_value_types import ConfigValueType as ConfigValueType
-from python_sdk.config._config_value_types import UnvalidatedDict as UnvalidatedDict
 from python_sdk.config._config_value_validators import ConfigValueValidationError as ConfigValueValidationError
 from python_sdk.config._config_value_validators import ConfigValueValidator as ConfigValueValidator
 from python_sdk.config._config_value_validators import ValidateDirectoryExists as ValidateDirectoryExists

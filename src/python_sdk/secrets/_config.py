@@ -1,3 +1,5 @@
+import typing
+
 from python_sdk import config
 
 
@@ -23,6 +25,6 @@ class AWSSecretsEngineConfig(
     USE_SSL: bool = config.Option(default=True)
     VERIFY: bool = config.Option(default=True)
     ENDPOINT_URL: str | None = config.Option()
-    BOTOCORE_CONFIG: config.UnvalidatedDict | None = config.Option(
+    BOTOCORE_CONFIG: dict[str, typing.Any] | None = config.Option(
         description="See https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html"
     )
