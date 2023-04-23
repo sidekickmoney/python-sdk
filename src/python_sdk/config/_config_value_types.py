@@ -31,6 +31,7 @@ ConfigValueType: typing.TypeAlias = (
     | int
     | float
     | bool
+    | dict[str, typing.Any]
     | Base64EncodedString
     | pathlib.Path
     | list[str]
