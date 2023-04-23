@@ -20,11 +20,26 @@ def _str_to_bool(string: str) -> bool:
     raise ValueError()
 
 
+def _str_to_dict(string: str) -> dict[str, typing.Any]:
+    try:
+        data = json.loads(string)
+    except json.JSONDecodeError:
+        raise ValueError()
+
+    if not isinstance(data, dict):
+        raise ValueError()
+
+    return data
+
+
 def _str_to_base64_encoded_string(string: str) -> str:
     string = string.strip()
     if not string:
         raise ValueError()
-    base64.b64decode(string, validate=True).decode("utf-8")  # check it can be decoded
+    try:
+        base64.b64decode(string, validate=True).decode("utf-8")  # check it can be decoded
+    except Exception as e:
+        raise ValueError() from e
     return string
 
 
@@ -63,7 +78,7 @@ def _str_to_list_of_base64_encoded_strings(string: str) -> list[str]:
     maybe_base64_encoded_strings = string.split(ENCODED_STRING_LIST_SEPARATOR)
     for i in maybe_base64_encoded_strings:
         # check they can be decoded
-        base64.b64decode(i, validate=True).decode("utf-8")
+        _str_to_base64_encoded_string(string=i)
     return maybe_base64_encoded_strings
 
 
@@ -96,7 +111,7 @@ def _get_string_decoder(data_type: type) -> typing.Callable[[str], _config_value
     elif data_type == bool:
         return _str_to_bool
     elif getattr(data_type, "__origin__", None) == dict:
-        return json.loads
+        return _str_to_dict
     elif data_type == _config_value_types.Base64EncodedString:
         return _str_to_base64_encoded_string
     elif data_type == pathlib.Path:

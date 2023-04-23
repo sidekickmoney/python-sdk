@@ -14,6 +14,7 @@ def string_decodes_to_expected_result(string: str, data_type: type[typing.Any], 
         result = _string_decoder.decode_string(string=string, data_type=data_type)
         return bool(result == expected_result)
     except Exception as e:
+        print(e.__class__)
         return e.__class__ is expected_result
 
 
