@@ -5,4 +5,4 @@ set -euo pipefail
 python3.10 -m venv --copies --clear --upgrade-deps ".venv"
 source ".venv/bin/activate"
 python -m pip install --upgrade pip setuptools wheel
-python -m pip install --editable ".[dev,aws,testing]"
+python -m pip install --editable ".[dev,cli,testing,aws]"
