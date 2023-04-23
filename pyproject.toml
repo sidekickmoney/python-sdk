@@ -6,7 +6,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "python-sdk"
+name = "pythonsdk"
 description = "Python Software Dev Kit"
 authors = [{name = "lijok", email = "lijok@pm.me"}]
 dynamic = ["version"]
