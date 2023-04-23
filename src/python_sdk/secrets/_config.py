@@ -1,83 +1,28 @@
-import functools
-import logging
-import typing
-
 from python_sdk import config
-from python_sdk.secrets import _secrets_engine
 
 
 # TODO(lijok): something to prevent this from being configured using secrets
-# TODO(lijok): extract ENGINE_AWS_SM_BOTOCORE_CONFIG to top level
 class SecretsConfig(config.Config, option_prefix="PYTHON_SDK_SECRETS_"):
-    ENGINE: typing.Literal["AWS_SM", "AWS_PS"] = config.Option(default="AWS_SM")
+    ENGINE: str = config.Option(default="AWS_SECRETS_MANAGER")
 
-    ENGINE_AWS_SM_SECRET_KEY_ID: str | None = config.Option()
-    ENGINE_AWS_SM_SECRET_ACCESS_KEY: str | None = config.Option()
-    ENGINE_AWS_SM_SESSION_TOKEN: str | None = config.Option()
-    ENGINE_AWS_SM_REGION_NAME: str | None = config.Option()
-    ENGINE_AWS_SM_API_VERSION: str | None = config.Option()
-    ENGINE_AWS_SM_USE_SSL: bool = config.Option(default=True)
-    ENGINE_AWS_SM_VERIFY: bool = config.Option(default=True)
-    ENGINE_AWS_SM_ENDPOINT_URL: str | None = config.Option()
-    ENGINE_AWS_SM_BOTOCORE_CONFIG: config.UnvalidatedDict | None = config.Option(
+
+# TODO(lijok): extract BOTOCORE_CONFIG to top level so users dont have to supply a dict
+class AWSSecretsEngineConfig(
+    config.Config,
+    name="AWS Secrets Engine Config",
+    description="""Configuration for the AWS Secrets Engines such as AWS Secrets Manager and
+    AWS Systems Manager Parameter Store.
+    """,
+    option_prefix="PYTHON_SDK_SECRETS_ENGINE_AWS_",
+):
+    ACCESS_KEY_ID: str | None = config.Option()
+    SECRET_ACCESS_KEY: str | None = config.Option()
+    SESSION_TOKEN: str | None = config.Option()
+    REGION_NAME: str | None = config.Option()
+    API_VERSION: str | None = config.Option()
+    USE_SSL: bool = config.Option(default=True)
+    VERIFY: bool = config.Option(default=True)
+    ENDPOINT_URL: str | None = config.Option()
+    BOTOCORE_CONFIG: config.UnvalidatedDict | None = config.Option(
         description="See https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html"
     )
-
-    ENGINE_AWS_PS_SECRET_KEY_ID: str | None = config.Option()
-    ENGINE_AWS_PS_SECRET_ACCESS_KEY: str | None = config.Option()
-    ENGINE_AWS_PS_SESSION_TOKEN: str | None = config.Option()
-    ENGINE_AWS_PS_REGION_NAME: str | None = config.Option()
-    ENGINE_AWS_PS_API_VERSION: str | None = config.Option()
-    ENGINE_AWS_PS_USE_SSL: bool = config.Option(default=True)
-    ENGINE_AWS_PS_VERIFY: bool = config.Option(default=True)
-    ENGINE_AWS_PS_ENDPOINT_URL: str | None = config.Option()
-    ENGINE_AWS_PS_BOTOCORE_CONFIG: config.UnvalidatedDict | None = config.Option(
-        description="See https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html"
-    )
-
-    @classmethod
-    def post_load_hook(cls) -> None:
-        cls.get_secrets_engine.cache_clear()
-
-    @classmethod
-    @functools.lru_cache(maxsize=1)
-    def get_secrets_engine(cls) -> _secrets_engine.SecretsEngine:
-        logging.debug(f"Secrets engine for fetching secrets picked. engine={cls.ENGINE}")
-        if cls.ENGINE == "AWS_SM":
-            return cls._get_aws_sm_secrets_engine()
-        elif cls.ENGINE == "AWS_PS":
-            return cls._get_aws_ps_secrets_engine()
-
-        raise NotImplementedError(f"Secrets engine not supported. engine={cls.ENGINE}")
-
-    @classmethod
-    def _get_aws_sm_secrets_engine(cls) -> _secrets_engine.SecretsEngine:
-        from python_sdk.secrets import _aws_sm
-
-        return _aws_sm.AWSSecretsManager(
-            secret_key_id=cls.ENGINE_AWS_SM_SECRET_KEY_ID,
-            secret_access_key=cls.ENGINE_AWS_SM_SECRET_ACCESS_KEY,
-            session_token=cls.ENGINE_AWS_SM_SESSION_TOKEN,
-            region_name=cls.ENGINE_AWS_SM_REGION_NAME,
-            api_version=cls.ENGINE_AWS_SM_API_VERSION,
-            use_ssl=cls.ENGINE_AWS_SM_USE_SSL,
-            verify=cls.ENGINE_AWS_SM_VERIFY,
-            endpoint_url=cls.ENGINE_AWS_SM_ENDPOINT_URL,
-            botocore_config=cls.ENGINE_AWS_SM_BOTOCORE_CONFIG,
-        )
-
-    @classmethod
-    def _get_aws_ps_secrets_engine(cls) -> _secrets_engine.SecretsEngine:
-        from python_sdk.secrets import _aws_ps
-
-        return _aws_ps.AWSParameterStore(
-            secret_key_id=cls.ENGINE_AWS_PS_SECRET_KEY_ID,
-            secret_access_key=cls.ENGINE_AWS_PS_SECRET_ACCESS_KEY,
-            session_token=cls.ENGINE_AWS_PS_SESSION_TOKEN,
-            region_name=cls.ENGINE_AWS_PS_REGION_NAME,
-            api_version=cls.ENGINE_AWS_PS_API_VERSION,
-            use_ssl=cls.ENGINE_AWS_PS_USE_SSL,
-            verify=cls.ENGINE_AWS_PS_VERIFY,
-            endpoint_url=cls.ENGINE_AWS_PS_ENDPOINT_URL,
-            botocore_config=cls.ENGINE_AWS_PS_BOTOCORE_CONFIG,
-        )
