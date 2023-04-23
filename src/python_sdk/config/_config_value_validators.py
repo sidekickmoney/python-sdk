@@ -83,7 +83,8 @@ class ValidatePathIsReadable:
         Raises:
             ConfigValueValidationError: Path is not readable.
         """
-        if not os.access(config_value, os.R_OK):
+        path_to_evaluate = config_value if config_value.exists() else config_value.parent
+        if not os.access(path_to_evaluate, os.R_OK):
             raise ConfigValueValidationError(f"{config_value} is not readable.")
 
 
@@ -101,7 +102,8 @@ class ValidatePathIsWritable:
         Raises:
             ConfigValueValidationError: Path is not writeable.
         """
-        if not os.access(config_value, os.W_OK):
+        path_to_evaluate = config_value if config_value.exists() else config_value.parent
+        if not os.access(path_to_evaluate, os.W_OK):
             raise ConfigValueValidationError(f"{config_value} is not writeable")
 
 
@@ -119,9 +121,8 @@ class ValidatePathIsExecutable:
         Raises:
             ConfigValueValidationError: Path is not executable.
         """
-        if not os.access(config_value, os.EX_OK):
-            # with contextlib.suppress(FileNotFoundError, PermissionError):
-            #     os.chmod(config_value, os.stat(config_value).st_mode | stat.S_IEXEC)
+        path_to_evaluate = config_value if config_value.exists() else config_value.parent
+        if not os.access(path_to_evaluate, os.EX_OK):
             raise ConfigValueValidationError(f"{config_value} is not executable")
 
 
