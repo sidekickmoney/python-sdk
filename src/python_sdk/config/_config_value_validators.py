@@ -4,7 +4,6 @@ import typing
 
 if typing.TYPE_CHECKING:
     from python_sdk.config import _config_option
-    from python_sdk.config import _config_value_types
 
 
 class ConfigValueValidationError(Exception):
@@ -30,8 +29,8 @@ class ConfigValueValidator(typing.Protocol):
         ...
 
 
-class EnsureFileExists:
-    name: str = "Ensure File Exists"
+class ValidateFileExists:
+    name: str = "Validate File Exists"
     description: str = "Validates that the file at a given path exists."
 
     def __call__(
@@ -50,8 +49,8 @@ class EnsureFileExists:
             raise ConfigValueValidationError(f"{config_value} not a file.")
 
 
-class EnsureDirectoryExists:
-    name: str = "Ensure Directory Exists"
+class ValidateDirectoryExists:
+    name: str = "Validate Directory Exists"
     description: str = "Validates that the directory at a given path exists."
 
     def __call__(
@@ -70,8 +69,8 @@ class EnsureDirectoryExists:
             raise ConfigValueValidationError(f"{config_value} not a directory.")
 
 
-class EnsurePathIsReadable:
-    name: str = "Ensure Path is Readable"
+class ValidatePathIsReadable:
+    name: str = "Validate Path is Readable"
     description: str = "Validates that a given path is readable."
 
     def __call__(
@@ -88,8 +87,8 @@ class EnsurePathIsReadable:
             raise ConfigValueValidationError(f"{config_value} is not readable.")
 
 
-class EnsurePathIsWritable:
-    name: str = "Ensure Path is Writable"
+class ValidatePathIsWritable:
+    name: str = "Validate Path is Writable"
     description: str = "Validates that a given path is writeable."
 
     def __call__(
@@ -106,8 +105,8 @@ class EnsurePathIsWritable:
             raise ConfigValueValidationError(f"{config_value} is not writeable")
 
 
-class EnsurePathIsExecutable:
-    name: str = "Ensure Path is Executable"
+class ValidatePathIsExecutable:
+    name: str = "Validate Path is Executable"
     description: str = "Validates that a given path is executable."
 
     def __call__(
@@ -126,8 +125,8 @@ class EnsurePathIsExecutable:
             raise ConfigValueValidationError(f"{config_value} is not executable")
 
 
-class EnsureFileType:
-    name: str = "Ensure File Type"
+class ValidateFileType:
+    name: str = "Validate File Type"
     description: str = "Validates that the file at a given path is of set file type."
 
     def __init__(self, file_type: str) -> None:

@@ -254,7 +254,7 @@ class ConfigSourcesConfig(
         Filepath for the LOCAL_FILE config source. Required when PYTHON_SDK_CONFIG_SOURCE is set to LOCAL_FILE.
         The file must exist and be readable by the running process.
         """,
-        validators=[_config_value_validators.EnsureFileExists(), _config_value_validators.EnsurePathIsReadable()],
+        validators=[_config_value_validators.ValidateFileExists(), _config_value_validators.ValidatePathIsReadable()],
     )
     SOURCE_REMOTE_HTTP_FILE_URL: str | None = _config_option.Option(
         description="""

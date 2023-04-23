@@ -1,6 +1,5 @@
 import copy
 import functools
-import types
 import typing
 
 from python_sdk import sentinel
